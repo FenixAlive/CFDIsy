@@ -87,10 +87,7 @@
         fxLayout="row center"
         [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'"
       >
-        <div
-          *ngFor="let el of element['expand'] | keyvalue"
-          fxLayout="row wrap"
-        >
+        <div *ngFor="let el of element.expand | keyvalue" fxLayout="row wrap">
           <div style="margin-right: 1rem">{{ el.key }}:</div>
           <div style="overflow: hidden; width: 200px">{{ el.value }}</div>
         </div>
