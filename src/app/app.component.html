@@ -1,10 +1,12 @@
-<mat-card style="width: 90%; margin: auto; margin-top: 2rem">
+<mat-toolbar fxLayoutAlign="space-between center">
+  <span>{{ title }}</span>
+</mat-toolbar>
+<mat-card style="width: 90%; height: auto; margin: auto; margin-top: 2rem">
   <mat-card-header>
-    <mat-card-title>{{ title }}</mat-card-title>
-    <mat-card-subtitle>Visualiza y transforma tus CFDIs</mat-card-subtitle>
+    <mat-card-subtitle>Visualiza y contabiliza tus CFDIs</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
-    <mat-vertical-stepper #stepper [animationDuration]="300">
+    <mat-stepper #stepper [animationDuration]="300">
       <mat-step
         [stepControl]="fileNames"
         errorMessage="Se requiere al menos un archivo CFDI tipo .xml"
@@ -35,22 +37,71 @@
           type="file"
           multiple
         />
-        <app-cfdisy-table></app-cfdisy-table>
-        <div>
+        <div fxLayout="row-reverse" fxLayoutAlign="">
           <button mat-raised-button matStepperNext>Siguiente</button>
         </div>
       </mat-step>
-      <mat-step
-        [stepControl]="fileNames"
-        errorMessage="Se requiere al menos un archivo CFDI tipo .xml"
-      >
-        <ng-template matStepLabel>Elige que quieres hacer</ng-template>
-        <div>
+      <mat-step>
+        <ng-template matStepLabel>Ver y Filtrar</ng-template>
+        <div fxLayout="row wrap" fxLayoutAlign="space-around center">
+          <form fxLayout="row wrap" fxLayoutAlign="space-around center">
+            <mat-form-field>
+              <mat-label>Filtrar Tabla</mat-label>
+              <input matInput [formControl]="cfdisyService.filtro" />
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>RFC (Opcional)</mat-label>
+              <input matInput [formControl]="cfdisyService.rfc" />
+            </mat-form-field>
+          </form>
+          <div fxLayout="row wrap" fxLayoutAlign="space-around center">
+            <div>Filtrar RFC:</div>
+            <mat-button-toggle-group
+              name="fontStyle"
+              aria-label="Font Style"
+              [formControl]="cfdisyService.tipoRfc"
+            >
+              <mat-button-toggle value="todos">Todos</mat-button-toggle>
+              <mat-button-toggle value="Emisor">Emisor</mat-button-toggle>
+              <mat-button-toggle value="Receptor">Receptor</mat-button-toggle>
+            </mat-button-toggle-group>
+          </div>
+        </div>
+        <app-cfdisy-table></app-cfdisy-table>
+        <div fxLayoutAlign="space-between center">
           <button mat-raised-button matStepperPrevious>Atras</button>
           <button mat-raised-button matStepperNext>Siguiente</button>
         </div>
       </mat-step>
-    </mat-vertical-stepper>
+      <mat-step>
+        <ng-template matStepLabel>Descargar</ng-template>
+        <div
+          fxLayout="row wrap"
+          fxLayoutAlign="space-around center"
+          style="margin: 3rem 0"
+        >
+          <button
+            type="button"
+            mat-raised-button
+            color="primary"
+            (click)="descargarCsvFiltros()"
+          >
+            descarga reporte .csv con filtros
+          </button>
+          <button
+            type="button"
+            mat-raised-button
+            color="accent"
+            (click)="descargarCsvTodos()"
+          >
+            descargar reporte .csv sin filtro
+          </button>
+        </div>
+        <div fxLayoutAlign="space-between center">
+          <button mat-raised-button matStepperPrevious>Atras</button>
+        </div>
+      </mat-step>
+    </mat-stepper>
   </mat-card-content>
 </mat-card>
 

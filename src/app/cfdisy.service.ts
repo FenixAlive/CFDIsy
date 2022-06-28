@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { cfdisyTableModel } from './models/cfdisy.models';
 import { XMLParser } from 'fast-xml-parser';
+import { FormControl } from '@angular/forms';
 
 @Injectable({
   providedIn: 'root',
@@ -16,19 +17,26 @@ export class CfdisyService {
   });
 
   xmlFiles: BehaviorSubject<any[]> = new BehaviorSubject([] as any[]);
-  tableData: BehaviorSubject<cfdisyTableModel[]> = new BehaviorSubject(
-    [] as cfdisyTableModel[]
-  );
+  tableData: BehaviorSubject<any[]> = new BehaviorSubject([] as any[]);
+  rfc = new FormControl('');
+  filtro = new FormControl('');
+  tipoRfc = new FormControl({ value: '', disabled: true });
 
   addXmlFile(file: any): void {
     if (file['Comprobante']) {
-      const uuid =
-        file['Comprobante']?.['Complemento']?.['TimbreFiscalDigital']?.['UUID'];
-      this.tableData.value.forEach((xml) => {
-        if (xml['uuid'] === uuid) {
+      const uuid = (
+        file['Comprobante']?.['Complemento']?.['TimbreFiscalDigital']?.[
+          'UUID'
+        ] as string
+      ).toUpperCase();
+      for (const xml of this.xmlFiles.value) {
+        const uuidxml = (
+          xml['Complemento']?.['TimbreFiscalDigital']?.['UUID'] as string
+        ).toUpperCase();
+        if (uuidxml === uuid) {
           return;
         }
-      });
+      }
       this.xmlFiles.next([...this.xmlFiles.value, file['Comprobante']]);
       this.addTableData(file['Comprobante']);
     }
@@ -40,51 +48,53 @@ export class CfdisyService {
   }
 
   removeXmlFile(uuid: string): void {
-    //const index = this.tableData.value.findIndex((el) => el['uuid'] === uuid);
-    this.tableData.next(
-      this.tableData.value.filter((val) => val['uuid'] !== uuid)
-    );
     this.xmlFiles.next(
-      this.xmlFiles.value.filter((val) => {
-        return uuid !== val['Complemento']?.['TimbreFiscalDigital']?.['UUID'];
-      })
+      this.xmlFiles.value.filter((val) => this.compareUuid(uuid, val))
     );
-    console.log(this.xmlFiles.value);
+    this.tableData.next(
+      this.tableData.value.filter((val) => this.compareUuid(uuid, val))
+    );
+  }
+
+  compareUuid(uuid: string, xml: any): boolean {
+    return uuid !== xml['Complemento']?.['TimbreFiscalDigital']?.['UUID'];
   }
 
   addTableData(xml: any): void {
-    const version = xml['Version'];
-    let fecha;
-    let uuid = '';
-    let emisorRfc = '';
-    let receptorRfc = '';
-    let total;
-    const expand = xml;
-    if (version === '3.3' || version === '4.0') {
-      uuid = xml['Complemento']?.['TimbreFiscalDigital']?.['UUID'];
-      fecha = new Date(xml['Fecha']);
-      emisorRfc = xml['Emisor']?.['Rfc'];
-      receptorRfc = xml['Receptor']?.['Rfc'];
-      total = Number(xml['Total'] | 0);
+    if (this.checkRfc(this.tipoRfc.value, xml)) {
+      this.tableData.next([...this.tableData.value, xml]);
     }
-    this.tableData.next([
-      ...this.tableData.value,
-      {
-        version,
-        fecha,
-        uuid,
-        emisorRfc,
-        receptorRfc,
-        total,
-        expand,
-      } as cfdisyTableModel,
-    ]);
   }
 
   checkFile(file: File): void {
     if (file?.type === 'text/xml') {
       this.readAndParseFile(file);
     }
+  }
+
+  filtrarRfc() {
+    if (this.tipoRfc.value === '') {
+      this.tableData.next(this.xmlFiles.value);
+      return;
+    }
+    this.tableData.next([]);
+    for (const xml of this.xmlFiles.value) {
+      this.addTableData(xml);
+    }
+  }
+
+  checkRfc(check: string, xml: any): boolean {
+    if (!check || check === 'todos') {
+      return this.checkRfc('Emisor', xml) || this.checkRfc('Receptor', xml);
+    }
+    if (
+      (xml[check]?.['Rfc'] as string)
+        .toUpperCase()
+        .includes(this.rfc.value.toUpperCase())
+    ) {
+      return true;
+    }
+    return false;
   }
 
   readAndParseFile(file: File): void {
@@ -98,5 +108,39 @@ export class CfdisyService {
       }
     };
     reader.readAsText(file, 'UTF-8');
+  }
+
+  reviewRfc() {
+    if (this.rfc.value !== '') {
+      if (this.rfc.value.includes('-')) {
+        this.rfc.setValue(this.rfc.value.replace('-', ''));
+      }
+      if (this.rfc.value.trim() !== this.rfc.value.toUpperCase()) {
+        this.rfc.setValue(this.rfc.value.trim().toUpperCase());
+      }
+      this.tipoRfc.enable();
+      this.tipoRfc.setValue('todos');
+    } else {
+      this.tipoRfc.setValue('');
+      this.tipoRfc.disable();
+    }
+  }
+
+  detalleXmlFile(uuid: string): void {
+    console.log(uuid);
+  }
+
+  filtrarData(data: any, filter: string): boolean {
+    const version = data['Version'];
+    const fecha = data['Fecha'];
+    const uuid = data['Complemento']?.['TimbreFiscalDigital']?.['UUID'];
+    const folio = data['Folio'];
+    const emisor = data['Emisor']?.['Rfc'];
+    const receptor = data['Receptor']?.['Rfc'];
+    const total = data['Total'];
+
+    return `${version} ${fecha} ${uuid} ${folio} ${emisor} ${receptor} ${total}`
+      .toUpperCase()
+      .includes(filter.toUpperCase());
   }
 }

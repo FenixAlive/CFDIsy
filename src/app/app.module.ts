@@ -13,6 +13,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
 
 @NgModule({
   declarations: [AppComponent, CfdisyTableComponent],
@@ -29,6 +33,10 @@ import { MatIconModule } from '@angular/material/icon';
     FlexLayoutModule,
     MatTableModule,
     MatIconModule,
+    MatButtonToggleModule,
+    MatToolbarModule,
+    MatPaginatorModule,
+    MatSortModule,
   ],
   providers: [],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
