@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { cfdisyTableModel } from './models/cfdisy.models';
 import { XMLParser } from 'fast-xml-parser';
 import { FormControl } from '@angular/forms';
+import { writeFileXLSX, utils } from 'xlsx';
+import { DownloadHelper } from './download-helper';
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +22,7 @@ export class CfdisyService {
   rfc = new FormControl('');
   filtro = new FormControl('');
   tipoRfc = new FormControl({ value: '', disabled: true });
+  downloadHelper = new DownloadHelper();
 
   addXmlFile(file: any): void {
     if (file['Comprobante']) {
@@ -84,10 +86,14 @@ export class CfdisyService {
   }
 
   checkRfc(check: string, xml: any): boolean {
-    if (!check || check === 'todos') {
+    if (!check || check === '') {
+      return true;
+    }
+    if (check === 'todos') {
       return this.checkRfc('Emisor', xml) || this.checkRfc('Receptor', xml);
     }
     if (
+      xml[check]?.['Rfc'] &&
       (xml[check]?.['Rfc'] as string)
         .toUpperCase()
         .includes(this.rfc.value.toUpperCase())
@@ -107,7 +113,7 @@ export class CfdisyService {
         console.error('Error al leer el archivo ' + file.name);
       }
     };
-    reader.readAsText(file, 'UTF-8');
+    reader.readAsText(file);
   }
 
   reviewRfc() {
@@ -142,5 +148,21 @@ export class CfdisyService {
     return `${version} ${fecha} ${uuid} ${folio} ${emisor} ${receptor} ${total}`
       .toUpperCase()
       .includes(filter.toUpperCase());
+  }
+  descargarCsvTodos(): void {
+    const xmls = this.xmlFiles.value.map((row) =>
+      this.downloadHelper.crearFila(row)
+    );
+    xmls.push([]);
+    xmls.push(this.downloadHelper.suma);
+    this.downloadHelper.suma = this.downloadHelper.limpiarValores();
+    const worksheet = utils.json_to_sheet(xmls);
+    const workbook = utils.book_new();
+    const date = new Date();
+    utils.book_append_sheet(workbook, worksheet, 'Todos');
+    writeFileXLSX(
+      workbook,
+      `CFDIsy_${date.getDate()}_${date.getMonth()}_${date.getFullYear()}.xlsx`
+    );
   }
 }
