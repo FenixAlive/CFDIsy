@@ -137,32 +137,86 @@ export class CfdisyService {
   }
 
   filtrarData(data: any, filter: string): boolean {
-    const version = data['Version'];
-    const fecha = data['Fecha'];
-    const uuid = data['Complemento']?.['TimbreFiscalDigital']?.['UUID'];
-    const folio = data['Folio'];
-    const emisor = data['Emisor']?.['Rfc'];
-    const receptor = data['Receptor']?.['Rfc'];
-    const total = data['Total'];
-
-    return `${version} ${fecha} ${uuid} ${folio} ${emisor} ${receptor} ${total}`
-      .toUpperCase()
-      .includes(filter.toUpperCase());
+    if (!filter || filter === '') {
+      return true;
+    }
+    let tempStr = '';
+    const check = (val: string | null): void => {
+      if (val && val != '') {
+        tempStr += val;
+      }
+    };
+    check(data['Version']);
+    check(data['Fecha']);
+    check(data['Complemento']?.['TimbreFiscalDigital']?.['UUID']);
+    check(data['Folio']);
+    check(data['Emisor']?.['Rfc']);
+    check(data['Receptor']?.['Rfc']);
+    check(data['Total']);
+    const filterUp = filter.toUpperCase().split('|');
+    for (let i = 0; i < filterUp.length; i++) {
+      if (
+        filterUp[i].trim() !== '' &&
+        tempStr.trim().toUpperCase().includes(filterUp[i].trim())
+      ) {
+        return true;
+      }
+    }
+    return false;
   }
+
   descargarCsvTodos(): void {
     const xmls = this.xmlFiles.value.map((row) =>
       this.downloadHelper.crearFila(row)
     );
-    xmls.push([]);
-    xmls.push(this.downloadHelper.suma);
-    this.downloadHelper.suma = this.downloadHelper.limpiarValores();
+    this.downloadHelper.agregaPie(xmls);
+    this.descargarXlsx(xmls, 'todos');
+  }
+
+  descargarCsvFiltros(): void {
+    const xmls = this.tableData.value
+      .filter((data) => {
+        return this.filtrarData(data, this.filtro.value);
+      })
+      .map((row) => this.downloadHelper.crearFila(row));
+    this.downloadHelper.agregaPie(xmls);
+    this.descargarXlsx(
+      xmls,
+      `${this.filtro.value}_${this.rfc.value}_${this.tipoRfc.value}`
+    );
+  }
+
+  descargarXlsx(xmls: any, name: string): void {
     const worksheet = utils.json_to_sheet(xmls);
     const workbook = utils.book_new();
-    const date = new Date();
     utils.book_append_sheet(workbook, worksheet, 'Todos');
+    const date = new Date();
     writeFileXLSX(
       workbook,
-      `CFDIsy_${date.getDate()}_${date.getMonth()}_${date.getFullYear()}.xlsx`
+      `CFDIsy_${name}_${date.getDate()}_${date.getMonth()}_${date.getFullYear()}.xlsx`
     );
+  }
+
+  tempFilterSearch(filter: string, strCompara: string): boolean {
+    let fInd = 0;
+    let result = false;
+    for (let i = 0; i < filter.length; i++) {
+      if (filter[i] === '|' || filter[i] === '&') {
+        if (fInd === 0) {
+          result = filter[i] === '|' ? false : true;
+        }
+        if (filter[i] === '|')
+          result =
+            result || filter.slice(fInd, i).toUpperCase().includes(strCompara);
+        else
+          result =
+            result && filter.slice(fInd, i).toUpperCase().includes(strCompara);
+        fInd = i + 1;
+      }
+    }
+    if (fInd < filter.length) {
+      console.log(filter.slice(fInd));
+    }
+    return result;
   }
 }

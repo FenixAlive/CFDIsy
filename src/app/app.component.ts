@@ -49,8 +49,7 @@ export class AppComponent implements OnInit {
   }
 
   descargarCsvFiltros(): void {
-    console.log(this.cfdisyService.rfc.value);
-    console.log(this.cfdisyService.tableData.value);
+    this.cfdisyService.descargarCsvFiltros();
   }
 
   descargarCsvTodos(): void {
