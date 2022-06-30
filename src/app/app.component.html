@@ -52,9 +52,11 @@
               <input
                 matInput
                 [formControl]="cfdisyService.filtro"
-                placeholder="hmi | tme"
+                placeholder="hmi | tme & 04-"
               />
-              <mat-hint>Agrega busqueda: |</mat-hint>
+              <mat-hint
+                >caracteres de filtrado: | & de izquierda a derecha</mat-hint
+              >
             </mat-form-field>
             <mat-form-field>
               <mat-label>RFC (Opcional)</mat-label>

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, find } from 'rxjs';
 import { XMLParser } from 'fast-xml-parser';
 import { FormControl } from '@angular/forms';
 import { writeFileXLSX, utils } from 'xlsx';
@@ -140,6 +140,7 @@ export class CfdisyService {
     if (!filter || filter === '') {
       return true;
     }
+    filter = filter.toUpperCase();
     let tempStr = '';
     const check = (val: string | null): void => {
       if (val && val != '') {
@@ -151,18 +152,35 @@ export class CfdisyService {
     check(data['Complemento']?.['TimbreFiscalDigital']?.['UUID']);
     check(data['Folio']);
     check(data['Emisor']?.['Rfc']);
+    check(data['Emisor']?.['Nombre']);
     check(data['Receptor']?.['Rfc']);
+    check(data['Receptor']?.['Nombre']);
     check(data['Total']);
-    const filterUp = filter.toUpperCase().split('|');
-    for (let i = 0; i < filterUp.length; i++) {
-      if (
-        filterUp[i].trim() !== '' &&
-        tempStr.trim().toUpperCase().includes(filterUp[i].trim())
-      ) {
-        return true;
+    tempStr = tempStr.toUpperCase();
+    let fInd = 0;
+    let result = false;
+    for (let i = 0; i < filter.length; i++) {
+      if (filter[i] === '|' || filter[i] === '&') {
+        if (fInd === 0) {
+          result = tempStr.includes(filter.slice(fInd, i).trim());
+        } else if (filter[fInd] === '|') {
+          result = result || tempStr.includes(filter.slice(fInd + 1, i).trim());
+        } else {
+          result = result && tempStr.includes(filter.slice(fInd + 1, i).trim());
+        }
+        fInd = i;
       }
     }
-    return false;
+    if (fInd < filter.length && filter.slice(fInd + 1).trim() !== '') {
+      if (fInd === 0) {
+        result = tempStr.includes(filter.slice(fInd).trim());
+      } else if (filter[fInd] === '|') {
+        result = result || tempStr.includes(filter.slice(fInd + 1).trim());
+      } else {
+        result = result && tempStr.includes(filter.slice(fInd + 1).trim());
+      }
+    }
+    return result;
   }
 
   descargarCsvTodos(): void {
@@ -197,25 +215,29 @@ export class CfdisyService {
     );
   }
 
-  tempFilterSearch(filter: string, strCompara: string): boolean {
+  tempFilterSearch(filter: string, tempStr: string): boolean {
     let fInd = 0;
     let result = false;
     for (let i = 0; i < filter.length; i++) {
       if (filter[i] === '|' || filter[i] === '&') {
         if (fInd === 0) {
           result = filter[i] === '|' ? false : true;
+          break;
         }
-        if (filter[i] === '|')
-          result =
-            result || filter.slice(fInd, i).toUpperCase().includes(strCompara);
-        else
-          result =
-            result && filter.slice(fInd, i).toUpperCase().includes(strCompara);
+        if (filter[fInd] === '|') {
+          result = result || filter.slice(fInd, i).includes(tempStr);
+        } else {
+          result = result && filter.slice(fInd, i).includes(tempStr);
+        }
         fInd = i + 1;
       }
     }
     if (fInd < filter.length) {
-      console.log(filter.slice(fInd));
+      if (filter[fInd] === '|') {
+        result = result || filter.slice(fInd, filter.length).includes(tempStr);
+      } else {
+        result = result && filter.slice(fInd, filter.length).includes(tempStr);
+      }
     }
     return result;
   }

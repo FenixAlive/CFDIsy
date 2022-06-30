@@ -10,6 +10,7 @@ import {
 } from '@angular/animations';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
   selector: 'app-cfdisy-table',
@@ -62,10 +63,12 @@ export class CfdisyTableComponent implements OnInit {
       this.dataSource.filter = this.cfdisyService.filtro.value;
       this.dataSource.filterPredicate = this.cfdisyService.filtrarData;
     });
-    this.cfdisyService.filtro.valueChanges.subscribe(() => {
-      this.dataSource.filter = this.cfdisyService.filtro.value;
-      this.dataSource.filterPredicate = this.cfdisyService.filtrarData;
-    });
+    this.cfdisyService.filtro.valueChanges
+      .pipe(debounceTime(1000), distinctUntilChanged())
+      .subscribe(() => {
+        this.dataSource.filter = this.cfdisyService.filtro.value;
+        this.dataSource.filterPredicate = this.cfdisyService.filtrarData;
+      });
   }
 
   detalleXmlFile(uuid: string): boolean {
