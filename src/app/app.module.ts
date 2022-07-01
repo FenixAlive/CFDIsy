@@ -17,6 +17,8 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [AppComponent, CfdisyTableComponent],
@@ -37,6 +39,8 @@ import { MatSortModule } from '@angular/material/sort';
     MatToolbarModule,
     MatPaginatorModule,
     MatSortModule,
+    MatSnackBarModule,
+    MatDialogModule,
   ],
   providers: [],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

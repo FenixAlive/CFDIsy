@@ -48,8 +48,10 @@ export class CfdisyTableComponent implements OnInit {
   constructor(private cfdisyService: CfdisyService) {}
 
   ngOnInit(): void {
-    this.cfdisyService.tableData.subscribe((val) => {
+    this.cfdisyService.tableData.pipe(debounceTime(100)).subscribe((val) => {
       this.dataSource = new MatTableDataSource(val);
+      this.dataSource.filter = this.cfdisyService.filtro.value;
+      this.dataSource.filterPredicate = this.cfdisyService.filtrarData;
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.matSort;
       this.dataSource.sortingDataAccessor = (
@@ -60,15 +62,21 @@ export class CfdisyTableComponent implements OnInit {
           .split('.')
           .reduce((acc, key) => acc && acc[key], data);
       };
-      this.dataSource.filter = this.cfdisyService.filtro.value;
-      this.dataSource.filterPredicate = this.cfdisyService.filtrarData;
     });
     this.cfdisyService.filtro.valueChanges
-      .pipe(debounceTime(1000), distinctUntilChanged())
+      .pipe(debounceTime(300))
       .subscribe(() => {
         this.dataSource.filter = this.cfdisyService.filtro.value;
         this.dataSource.filterPredicate = this.cfdisyService.filtrarData;
       });
+    this.cfdisyService.rfc.valueChanges
+      .pipe(debounceTime(300))
+      .subscribe(() => {
+        this.cfdisyService.reviewRfc();
+      });
+    this.cfdisyService.tipoRfc.valueChanges.subscribe(() => {
+      this.cfdisyService.filtrarRfc();
+    });
   }
 
   detalleXmlFile(uuid: string): boolean {

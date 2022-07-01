@@ -1,3 +1,4 @@
+import { debounceTime } from 'rxjs';
 import { CfdisyService } from './cfdisy.service';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
@@ -27,12 +28,6 @@ export class AppComponent implements OnInit {
       } else {
         this.fileNames.reset(null);
       }
-    });
-    this.cfdisyService.rfc.valueChanges.subscribe(() => {
-      this.cfdisyService.reviewRfc();
-    });
-    this.cfdisyService.tipoRfc.valueChanges.subscribe(() => {
-      this.cfdisyService.filtrarRfc();
     });
   }
 

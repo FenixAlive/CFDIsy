@@ -156,6 +156,9 @@ export class CfdisyService {
     check(data['Receptor']?.['Rfc']);
     check(data['Receptor']?.['Nombre']);
     check(data['Total']);
+    for (let i = 0; i < data['Conceptos']?.['Concepto']?.length; i++) {
+      check(data['Conceptos']?.['Concepto']?.[i]?.['Descripcion']);
+    }
     tempStr = tempStr.toUpperCase();
     let fInd = 0;
     let result = false;
@@ -171,7 +174,11 @@ export class CfdisyService {
         fInd = i;
       }
     }
-    if (fInd < filter.length && filter.slice(fInd + 1).trim() !== '') {
+
+    if (
+      fInd < filter.length &&
+      (fInd === 0 || filter.slice(fInd + 1).trim() !== '')
+    ) {
       if (fInd === 0) {
         result = tempStr.includes(filter.slice(fInd).trim());
       } else if (filter[fInd] === '|') {
