@@ -32,6 +32,7 @@ export class AppComponent implements OnInit {
   }
 
   onFileSelected(event: any): void {
+    this.cfdisyService.countXml = 0;
     const tempFile = event?.target?.files;
     for (let i = 0; i < tempFile.length; i++) {
       this.cfdisyService.checkFile(tempFile[i]);

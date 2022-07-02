@@ -121,12 +121,13 @@ export class DownloadHelper {
     xmls.push([]);
     xmls.push({
       UUID: 'Subtotal con IEPS',
-      SUBTOTAL: (this.suma as any)['SUBTOTAL'] + (this.suma as any)['IEPS'],
+      'SUMA SUBTOTAL':
+        (this.suma as any)['SUMA SUBTOTAL'] + (this.suma as any)['IEPS'],
     });
     xmls.push([]);
     xmls.push({
       UUID: 'Subtotal del IVA',
-      IVA: (this.suma as any)['IVA'] / 1.16,
+      IVA: (this.suma as any)['IVA'] / 0.16,
     });
     this.suma = this.limpiarValores();
   }

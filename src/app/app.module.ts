@@ -19,9 +19,10 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
+import { CfdisyDetalleComponent } from './cfdisy-detalle/cfdisy-detalle.component';
 
 @NgModule({
-  declarations: [AppComponent, CfdisyTableComponent],
+  declarations: [AppComponent, CfdisyTableComponent, CfdisyDetalleComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

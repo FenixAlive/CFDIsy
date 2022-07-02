@@ -4,6 +4,7 @@ import { XMLParser } from 'fast-xml-parser';
 import { FormControl } from '@angular/forms';
 import { writeFileXLSX, utils } from 'xlsx';
 import { DownloadHelper } from './download-helper';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root',
@@ -23,6 +24,16 @@ export class CfdisyService {
   filtro = new FormControl('');
   tipoRfc = new FormControl({ value: '', disabled: true });
   downloadHelper = new DownloadHelper();
+  countXml = 0;
+
+  constructor(private _snackBar: MatSnackBar) {}
+
+  mostrarSnack(mess: string, colorClass: string) {
+    this._snackBar.open(mess, 'cerrar', {
+      duration: 2000,
+      panelClass: ['mat-toolbar', colorClass],
+    });
+  }
 
   addXmlFile(file: any): void {
     if (file['Comprobante']) {
@@ -35,10 +46,15 @@ export class CfdisyService {
         const uuidxml = (
           xml['Complemento']?.['TimbreFiscalDigital']?.['UUID'] as string
         ).toUpperCase();
-        if (uuidxml === uuid) {
+        if (!uuidxml || uuidxml === uuid) {
           return;
         }
       }
+      this.countXml++;
+      this.mostrarSnack(
+        'Se ha agregado ' + this.countXml + ' archivos cfdi',
+        'success'
+      );
       this.xmlFiles.next([...this.xmlFiles.value, file['Comprobante']]);
       this.addTableData(file['Comprobante']);
     }
@@ -47,6 +63,8 @@ export class CfdisyService {
   removeAllXmlFiles(): void {
     this.xmlFiles.next([]);
     this.tableData.next([]);
+    this.countXml = 0;
+    this.mostrarSnack('Se han eliminado todos los cfdi', 'mat-accent');
   }
 
   removeXmlFile(uuid: string): void {
@@ -56,6 +74,7 @@ export class CfdisyService {
     this.tableData.next(
       this.tableData.value.filter((val) => this.compareUuid(uuid, val))
     );
+    this.mostrarSnack('Se ha eliminado el cfdi: ' + uuid, 'info');
   }
 
   compareUuid(uuid: string, xml: any): boolean {
@@ -110,7 +129,7 @@ export class CfdisyService {
         const parsed = this.parser.parse(e?.target?.result as string);
         this.addXmlFile(parsed);
       } else {
-        console.error('Error al leer el archivo ' + file.name);
+        this.mostrarSnack('Error al leer el archivo' + file.name, 'warning');
       }
     };
     reader.readAsText(file);
@@ -132,8 +151,8 @@ export class CfdisyService {
     }
   }
 
-  detalleXmlFile(uuid: string): void {
-    console.log(uuid);
+  detalleXmlFile(xml: any): void {
+    console.log(xml);
   }
 
   filtrarData(data: any, filter: string): boolean {
