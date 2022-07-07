@@ -29,7 +29,6 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 })
 export class CfdisyTableComponent implements OnInit {
   columnsToDisplay = [
-    'version',
     'fecha',
     'uuid',
     'folio',
@@ -79,8 +78,8 @@ export class CfdisyTableComponent implements OnInit {
     });
   }
 
-  detalleXmlFile(uuid: string): boolean {
-    this.cfdisyService.detalleXmlFile(uuid);
+  detalleXmlFile(xml: any): boolean {
+    this.cfdisyService.detalleXmlFile(xml);
     return false;
   }
 

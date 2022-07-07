@@ -1,10 +1,14 @@
+import { MatDialog } from '@angular/material/dialog';
+import { catchError, tap } from 'rxjs/operators';
+import { CfdisyDetalleComponent } from './cfdisy-detalle/cfdisy-detalle.component';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, find } from 'rxjs';
+import { BehaviorSubject, find, Observable } from 'rxjs';
 import { XMLParser } from 'fast-xml-parser';
 import { FormControl } from '@angular/forms';
 import { writeFileXLSX, utils } from 'xlsx';
 import { DownloadHelper } from './download-helper';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { HttpHeaders, HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -20,13 +24,18 @@ export class CfdisyService {
 
   xmlFiles: BehaviorSubject<any[]> = new BehaviorSubject([] as any[]);
   tableData: BehaviorSubject<any[]> = new BehaviorSubject([] as any[]);
+  uuidValid: BehaviorSubject<any[]> = new BehaviorSubject([] as any[]);
   rfc = new FormControl('');
   filtro = new FormControl('');
   tipoRfc = new FormControl({ value: '', disabled: true });
   downloadHelper = new DownloadHelper();
   countXml = 0;
 
-  constructor(private _snackBar: MatSnackBar) {}
+  constructor(
+    private _snackBar: MatSnackBar,
+    private dialog: MatDialog,
+    private http: HttpClient
+  ) {}
 
   mostrarSnack(mess: string, colorClass: string) {
     this._snackBar.open(mess, 'cerrar', {
@@ -52,8 +61,24 @@ export class CfdisyService {
       }
       this.countXml++;
       this.mostrarSnack(
-        'Se ha agregado ' + this.countXml + ' archivos cfdi',
+        'Se agregaron ' + this.countXml + ' archivos CFDI',
         'success'
+      );
+      file['Comprobante']['Total'] =
+        Number(file['Comprobante']['Total']) ?? file['Comprobante']?.['Total'];
+      this.validaCfdi(file['Comprobante']).subscribe(
+        (val: string) => {
+          file['Comprobante']['Valid'] = val;
+          if (val.includes('<a:Estado>Vigente</a:Estado>')) {
+            file['Comprobante']['Status'] = 'success';
+          } else {
+            file['Comprobante']['Status'] = 'info';
+          }
+        },
+        () => {
+          file['Comprobante']['Status'] = 'warning';
+          file['Comprobante']['Valid'] = null;
+        }
       );
       this.xmlFiles.next([...this.xmlFiles.value, file['Comprobante']]);
       this.addTableData(file['Comprobante']);
@@ -152,7 +177,9 @@ export class CfdisyService {
   }
 
   detalleXmlFile(xml: any): void {
-    console.log(xml);
+    this.dialog.open(CfdisyDetalleComponent, {
+      data: { xml },
+    });
   }
 
   filtrarData(data: any, filter: string): boolean {
@@ -266,5 +293,53 @@ export class CfdisyService {
       }
     }
     return result;
+  }
+
+  validaCfdi(xml: any): Observable<string> {
+    const cData = `<![CDATA[?re=${xml['Emisor']?.['Rfc']}&rr=${xml['Receptor']?.['Rfc']}&tt=${xml['Total']}&id=${xml['Complemento']?.['TimbreFiscalDigital']?.['UUID']}]]>`;
+    const cuerpo = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/"><soapenv:Header/><soapenv:Body><tem:Consulta><!--Optional:--><tem:expresionImpresa>${cData}</tem:expresionImpresa></tem:Consulta></soapenv:Body></soapenv:Envelope>`;
+    const headerDict = {
+      'content-type': 'text/xml;charset="utf-8"',
+      Accept: 'text/xml',
+      SOAPAction: 'http://tempuri.org/IConsultaCFDIService/Consulta',
+    };
+    return this.http.post(
+      'https://consultaqr.facturaelectronica.sat.gob.mx/ConsultaCFDIService.svc?wsdl',
+      cuerpo,
+      { headers: new HttpHeaders(headerDict), responseType: 'text' }
+    );
+    /*
+    let resp =
+        ureq::post("https://consultaqr.facturaelectronica.sat.gob.mx/ConsultaCFDIService.svc?wsdl")
+            .set("content-type", "text/xml;charset=\"utf-8\"")
+            .set("Accept", "value: V")
+            .set(
+                "SOAPAction",
+                "http://tempuri.org/IConsultaCFDIService/Consulta",
+            )
+            .timeout_connect(10_000)
+            .send_string(&cuerpo);
+    let es_valido;
+    if resp.ok() {
+        if let Ok(res) = resp.into_string() {
+            let esta: Vec<&str> = res.split("<a:Estado>").collect();
+            if esta.len() == 2 {
+                let dos: Vec<&str> = esta[1].split("</a:Estado>").collect();
+                //println!("{}",dos[0]);
+                return format!("esValido('{}')", dos[0]);
+            } else {
+                //println!("validar_cfdi_sat: res: {}", res);
+                es_valido = "esValido('pendienteOk')".to_string();
+            }
+        } else {
+            //println!("validar_cfdi_sat: No se puede convertir a string la respuesta");
+            es_valido = "esValido('pendienteOk')".to_string();
+        }
+    } else {
+        //println!("validar_cfdi_sat: respuesta distinta a 2xx");
+        es_valido = "esValido('pendienteNo2xx')".to_string();
+    }
+    es_valido
+  */
   }
 }

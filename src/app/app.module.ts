@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CfdisyTableComponent } from './cfdisy-table/cfdisy-table.component';
@@ -20,13 +21,15 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
 import { CfdisyDetalleComponent } from './cfdisy-detalle/cfdisy-detalle.component';
+import { CfdisyValidateComponent } from './cfdisy-validate/cfdisy-validate.component';
 
 @NgModule({
-  declarations: [AppComponent, CfdisyTableComponent, CfdisyDetalleComponent],
+  declarations: [AppComponent, CfdisyTableComponent, CfdisyDetalleComponent, CfdisyValidateComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    HttpClientModule,
     MatStepperModule,
     MatInputModule,
     MatFormFieldModule,

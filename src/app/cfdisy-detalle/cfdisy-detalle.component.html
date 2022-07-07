@@ -1,1 +1,65 @@
-<p>cfdisy-detalle works!</p>
+<div #appContainer>
+  <div class="cabCols" id="container">
+    <div class="cabCols borde" id="validar">
+      <b class="padUD">Esperando revisión de validación</b>
+    </div>
+    <div class="cabCols" id="cabecera">
+      <div class="cabrows">
+        <div class="flexGrow1" id="serie"></div>
+        <div class="flexGrow1" id="folio"></div>
+        <div class="flexGrow2" id="uuid"></div>
+      </div>
+      <div id="" class="cabrows">
+        <div class="flexGrow1" id="fecha"></div>
+        <div class="flexGrow1" id="tipoComp"></div>
+        <div class="flexGrow1" id="lugarExp"></div>
+      </div>
+    </div>
+    <div id="relacionadosAll"></div>
+    <div class="cabrows" id="emirec">
+      <div class="cabcols borde flexGrow1 minWidth2" id="emisorcont">
+        <div class="bordeDownDash" id="emTitulo"><b>Emisor</b></div>
+        <div id="rfcEmi"></div>
+        <div id="razonEmi"></div>
+        <div id="regimenEmi"></div>
+      </div>
+      <div class="cabcols borde flexGrow1 minWidth2" id="receptorcont">
+        <div class="bordeDownDash" id="recTitulo"><b>Receptor</b></div>
+        <div id="rfcRec"></div>
+        <div id="razonRec"></div>
+        <div id="usoCfdi"></div>
+      </div>
+    </div>
+    <div class="cabCols" #conceptos></div>
+    <div class="cabrows" id="traslaCont">
+      <div class="cabColsStart borde minWidth2 flexGrow1" id="trasAdiCont">
+        <div id="formaPago"></div>
+        <div id="metodoPago"></div>
+        <div id="condicionesPago"></div>
+        <div id="tipoCambio"></div>
+        <div id="moneda"></div>
+      </div>
+      <div class="cabColsStart borde minWidth2 flexGrow1" id="trasCont">
+        <div id="subtotal"></div>
+        <div id="descuento"></div>
+        <div id="subNeto"></div>
+        <div id="impuestos" class="cabCols flexGrow1"></div>
+        <div id="total" class="bordeUpDash"></div>
+        <div id="totalPesos"></div>
+      </div>
+    </div>
+    <div id="pagos"></div>
+    <div class="cabrows" id="complemento">
+      <div class="width20 flexGrow1" id="qr"></div>
+      <div class="width75 flexGrow2 borde" id="compCont">
+        <div id="versionCfdi"></div>
+        <div id="fechaTimbre"></div>
+        <div id="certEmi"></div>
+        <div id="certSat"></div>
+        <div id="selloEmi"></div>
+        <div id="selloSat"></div>
+        <div id="cadenaTim"></div>
+      </div>
+    </div>
+  </div>
+</div>
