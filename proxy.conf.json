@@ -1,0 +1,8 @@
+{
+  "*/api/sat":{
+    "target": "https://consultaqr.facturaelectronica.sat.gob.mx/ConsultaCFDIService.svc?wsdl",
+    "secure": false,
+    "logLevel": "debug",
+    "changeOrigin": true
+  }
+}

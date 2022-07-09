@@ -296,6 +296,7 @@ export class CfdisyService {
   }
 
   validaCfdi(xml: any): Observable<string> {
+    const targetUrl = 'api/sat';
     const cData = `<![CDATA[?re=${xml['Emisor']?.['Rfc']}&rr=${xml['Receptor']?.['Rfc']}&tt=${xml['Total']}&id=${xml['Complemento']?.['TimbreFiscalDigital']?.['UUID']}]]>`;
     const cuerpo = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/"><soapenv:Header/><soapenv:Body><tem:Consulta><!--Optional:--><tem:expresionImpresa>${cData}</tem:expresionImpresa></tem:Consulta></soapenv:Body></soapenv:Envelope>`;
     const headerDict = {
@@ -303,43 +304,9 @@ export class CfdisyService {
       Accept: 'text/xml',
       SOAPAction: 'http://tempuri.org/IConsultaCFDIService/Consulta',
     };
-    return this.http.post(
-      'https://consultaqr.facturaelectronica.sat.gob.mx/ConsultaCFDIService.svc?wsdl',
-      cuerpo,
-      { headers: new HttpHeaders(headerDict), responseType: 'text' }
-    );
-    /*
-    let resp =
-        ureq::post("https://consultaqr.facturaelectronica.sat.gob.mx/ConsultaCFDIService.svc?wsdl")
-            .set("content-type", "text/xml;charset=\"utf-8\"")
-            .set("Accept", "value: V")
-            .set(
-                "SOAPAction",
-                "http://tempuri.org/IConsultaCFDIService/Consulta",
-            )
-            .timeout_connect(10_000)
-            .send_string(&cuerpo);
-    let es_valido;
-    if resp.ok() {
-        if let Ok(res) = resp.into_string() {
-            let esta: Vec<&str> = res.split("<a:Estado>").collect();
-            if esta.len() == 2 {
-                let dos: Vec<&str> = esta[1].split("</a:Estado>").collect();
-                //println!("{}",dos[0]);
-                return format!("esValido('{}')", dos[0]);
-            } else {
-                //println!("validar_cfdi_sat: res: {}", res);
-                es_valido = "esValido('pendienteOk')".to_string();
-            }
-        } else {
-            //println!("validar_cfdi_sat: No se puede convertir a string la respuesta");
-            es_valido = "esValido('pendienteOk')".to_string();
-        }
-    } else {
-        //println!("validar_cfdi_sat: respuesta distinta a 2xx");
-        es_valido = "esValido('pendienteNo2xx')".to_string();
-    }
-    es_valido
-  */
+    return this.http.post(targetUrl, cuerpo, {
+      headers: new HttpHeaders(headerDict),
+      responseType: 'text',
+    });
   }
 }
