@@ -90,11 +90,11 @@ export class DownloadHelper {
     if (xml['Impuestos']?.[tipo]?.[single] instanceof Array) {
       for (const imp of xml['Impuestos'][tipo][single]) {
         if (imp['Impuesto'] === cual) {
-          suma += Number(imp['Importe']);
+          suma += Number(imp['Importe']) ?? 0;
         }
       }
     } else if (xml['Impuestos']?.[tipo]?.[single]?.['Impuesto'] === cual) {
-      suma = Number(xml['Impuestos']?.[tipo][single]['Importe']);
+      suma = Number(xml['Impuestos']?.[tipo][single]['Importe']) ?? 0;
     }
     return suma;
   }
