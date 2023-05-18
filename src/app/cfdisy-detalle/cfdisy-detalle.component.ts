@@ -14,23 +14,19 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
   styleUrls: ['./cfdisy-detalle.component.scss'],
 })
 export class CfdisyDetalleComponent implements OnInit {
-  @ViewChild('appContainer') appContainer!: ElementRef;
-  @ViewChild('conceptos') conceptos!: ElementRef;
+  xml: any;
+
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.data?.['xml']) {
+      this.xml = this.data?.['xml'];
+      console.log(this.data?.['xml']);
+    }
+  }
 
   //oculta datos hasta que este lista la info
 
-  //muestra la app
-  mostrarApp(isIt: boolean): void {
-    const el = this.appContainer.nativeElement;
-    if (el.style.display == 'none' && isIt) {
-      el.style.display = 'flex';
-    } else {
-      el.style.display = 'none';
-    }
-  }
   /*
   //agrega cabecera de conceptos
   showConcep(isIt: boolean): void {

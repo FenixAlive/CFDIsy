@@ -1,16 +1,28 @@
-<div #appContainer>
+<div *ngIf="xml">
   <div class="cabCols" id="container">
     <div class="cabCols borde" id="validar">
-      <b class="padUD">Esperando revisión de validación</b>
+      <b class="{{ xml['Status'] }}">{{
+        xml["Status"] === "success"
+          ? "Valido y Vigente"
+          : "No Valido o Cancelado"
+      }}</b>
     </div>
     <div class="cabCols" id="cabecera">
       <div class="cabrows">
-        <div class="flexGrow1" id="serie"></div>
-        <div class="flexGrow1" id="folio"></div>
-        <div class="flexGrow2" id="uuid"></div>
+        <div class="flexGrow1" id="serie">
+          {{ xml["Serie"] }}
+        </div>
+        <div class="flexGrow1" id="folio">
+          {{ xml["Folio"] }}
+        </div>
+        <div class="flexGrow2" id="uuid">
+          {{ xml["Complemento"]["TimbreFiscalDigital"]["UUID"] | uppercase }}
+        </div>
       </div>
       <div id="" class="cabrows">
-        <div class="flexGrow1" id="fecha"></div>
+        <div class="flexGrow1" id="fecha">
+          {{ xml["Fecha"] | date: "yyyy-MM-dd" }}
+        </div>
         <div class="flexGrow1" id="tipoComp"></div>
         <div class="flexGrow1" id="lugarExp"></div>
       </div>

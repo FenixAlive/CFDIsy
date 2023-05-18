@@ -37,7 +37,7 @@ export class CfdisyService {
     private http: HttpClient
   ) {}
 
-  mostrarSnack(mess: string, colorClass: string) {
+  showSnack(mess: string, colorClass: string) {
     this._snackBar.open(mess, 'cerrar', {
       duration: 2000,
       panelClass: ['mat-toolbar', colorClass],
@@ -60,13 +60,13 @@ export class CfdisyService {
         }
       }
       this.countXml++;
-      this.mostrarSnack(
+      this.showSnack(
         'Se agregaron ' + this.countXml + ' archivos CFDI',
         'success'
       );
       file['Comprobante']['Total'] =
         Number(file['Comprobante']['Total']) ?? file['Comprobante']?.['Total'];
-      this.validaCfdi(file['Comprobante']).subscribe(
+      this.validateCfdi(file['Comprobante']).subscribe(
         (val: string) => {
           file['Comprobante']['Valid'] = val;
           if (val.includes('<a:Estado>Vigente</a:Estado>')) {
@@ -89,7 +89,7 @@ export class CfdisyService {
     this.xmlFiles.next([]);
     this.tableData.next([]);
     this.countXml = 0;
-    this.mostrarSnack('Se han eliminado todos los cfdi', 'mat-accent');
+    this.showSnack('Se han eliminado todos los cfdi', 'mat-accent');
   }
 
   removeXmlFile(uuid: string): void {
@@ -99,7 +99,7 @@ export class CfdisyService {
     this.tableData.next(
       this.tableData.value.filter((val) => this.compareUuid(uuid, val))
     );
-    this.mostrarSnack('Se ha eliminado el cfdi: ' + uuid, 'info');
+    this.showSnack('Se ha eliminado el cfdi: ' + uuid, 'info');
   }
 
   compareUuid(uuid: string, xml: any): boolean {
@@ -154,7 +154,7 @@ export class CfdisyService {
         const parsed = this.parser.parse(e?.target?.result as string);
         this.addXmlFile(parsed);
       } else {
-        this.mostrarSnack('Error al leer el archivo' + file.name, 'warning');
+        this.showSnack('Error al leer el archivo' + file.name, 'warning');
       }
     };
     reader.readAsText(file);
@@ -176,8 +176,9 @@ export class CfdisyService {
     }
   }
 
-  detalleXmlFile(xml: any): void {
+  detailXmlFile(xml: any): void {
     this.dialog.open(CfdisyDetalleComponent, {
+      width: '90vw',
       data: { xml },
     });
   }
@@ -295,7 +296,7 @@ export class CfdisyService {
     return result;
   }
 
-  validaCfdi(xml: any): Observable<string> {
+  validateCfdi(xml: any): Observable<string> {
     const targetUrl = 'api/sat';
     const cData = `<![CDATA[?re=${xml['Emisor']?.['Rfc']}&rr=${xml['Receptor']?.['Rfc']}&tt=${xml['Total']}&id=${xml['Complemento']?.['TimbreFiscalDigital']?.['UUID']}]]>`;
     const cuerpo = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tem="http://tempuri.org/"><soapenv:Header/><soapenv:Body><tem:Consulta><!--Optional:--><tem:expresionImpresa>${cData}</tem:expresionImpresa></tem:Consulta></soapenv:Body></soapenv:Envelope>`;

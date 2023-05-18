@@ -90,11 +90,11 @@ export class DownloadHelper {
     if (xml['Impuestos']?.[tipo]?.[single] instanceof Array) {
       for (const imp of xml['Impuestos'][tipo][single]) {
         if (imp['Impuesto'] === cual) {
-          suma += Number(imp['Importe']);
+          suma += Number(imp?.['Importe'] ?? 0);
         }
       }
     } else if (xml['Impuestos']?.[tipo]?.[single]?.['Impuesto'] === cual) {
-      suma = Number(xml['Impuestos']?.[tipo][single]['Importe']);
+      suma = Number(xml['Impuestos']?.[tipo][single]?.['Importe'] ?? 0);
     }
     return suma;
   }
@@ -106,7 +106,7 @@ export class DownloadHelper {
     } else if (xml['TipoDeComprobante'] === 'P') {
       if (xml['Complemento']?.['Pagos']?.['Pago'] instanceof Array) {
         for (const pago of xml['Complemento']['Pagos']['Pago']) {
-          sum += Number(pago['Monto']);
+          sum += Number(pago['Monto'] ?? 0);
         }
       } else {
         sum = Number(xml['Complemento']?.['Pagos']?.['Pago']?.['Monto'] ?? 0);
