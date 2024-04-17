@@ -179,6 +179,7 @@ export class CfdisyService {
   detailXmlFile(xml: any): void {
     this.dialog.open(CfdisyDetalleComponent, {
       width: '90vw',
+      maxHeight: '98vh',
       data: { xml },
     });
   }

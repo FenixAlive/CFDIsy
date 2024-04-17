@@ -15,12 +15,14 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 })
 export class CfdisyDetalleComponent implements OnInit {
   xml: any;
+  preXml = ''
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any) {}
 
   ngOnInit(): void {
     if (this.data?.['xml']) {
       this.xml = this.data?.['xml'];
+      this.preXml = JSON.stringify(this.xml, undefined, 2)
       console.log(this.data?.['xml']);
     }
   }
