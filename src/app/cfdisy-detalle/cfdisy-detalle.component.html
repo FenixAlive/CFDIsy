@@ -9,37 +9,40 @@
     </div>
     <div class="cabCols" id="cabecera">
       <div class="cabrows">
-        <div class="flexGrow1" id="serie">
-          {{ xml["Serie"] }}
+        <div class="flexGrow1 bordeDash cabrows" id="serie">
+          <div class="width12 textAlL flexGrow1"><b>Serie:</b></div>
+          <div class="width12 textAlL flexGrow2">{{ xml["Serie"] }}</div>
         </div>
-        <div class="flexGrow1" id="folio">
-          {{ xml["Folio"] }}
+        <div class="flexGrow1 bordeDash cabrows" id="folio">
+          <div class="width12 textAlL flexGrow1"><b>Folio:</b></div>
+          <div class="width12 textAlL flexGrow2">{{ xml["Folio"] }}</div>
         </div>
-        <div class="flexGrow2" id="uuid">
-          {{ xml["Complemento"]["TimbreFiscalDigital"]["UUID"] | uppercase }}
+        <div class="flexGrow2 bordeDash cabrows" id="uuid">
+          <div class="width12 textAlL flexGrow1"><b>UUID:</b></div>
+          <div class="width12 textAlL flexGrow2">{{ xml["Complemento"]["TimbreFiscalDigital"]["UUID"] | uppercase }}</div>
         </div>
       </div>
       <div id="" class="cabrows">
-        <div class="flexGrow1" id="fecha">
-          {{ xml["Fecha"] | date: "yyyy-MM-dd" }}
+        <div class="flexGrow1 bordeDash" id="fecha">
+         Fecha: {{ xml["Fecha"] | date: "yyyy-MM-dd" }}
         </div>
-        <div class="flexGrow1" id="tipoComp"></div>
-        <div class="flexGrow1" id="lugarExp"></div>
+        <div class="flexGrow1 bordeDash" id="tipoComp">Tipo Comprobante: {{ xml["TipoDeComprobante"] }}</div>
+        <div class="flexGrow1 bordeDash" id="lugarExp">Lugar Expedición: {{ xml["LugarExpedicion"] }}</div>
       </div>
     </div>
     <div id="relacionadosAll"></div>
     <div class="cabrows" id="emirec">
       <div class="cabcols borde flexGrow1 minWidth2" id="emisorcont">
         <div class="bordeDownDash" id="emTitulo"><b>Emisor</b></div>
-        <div id="rfcEmi"></div>
-        <div id="razonEmi"></div>
-        <div id="regimenEmi"></div>
+        <div id="rfcEmi">RFC: {{xml["Emisor"]["Rfc"]}}</div>
+        <div id="razonEmi">Razón Social: {{xml["Emisor"]["Nombre"]}}</div>
+        <div id="regimenEmi">Regimen Emisor: {{xml["Emisor"]["RegimenFiscal"]}}</div>
       </div>
       <div class="cabcols borde flexGrow1 minWidth2" id="receptorcont">
         <div class="bordeDownDash" id="recTitulo"><b>Receptor</b></div>
-        <div id="rfcRec"></div>
-        <div id="razonRec"></div>
-        <div id="usoCfdi"></div>
+        <div id="rfcRec">RFC: {{xml["Receptor"]["Rfc"]}}</div>
+        <div id="razonRec">Razón Social: {{xml["Receptor"]["Nombre"]}}</div>
+        <div id="usoCfdi">Uso CFDI: {{xml["Receptor"]["UsoCFDI"]}}</div>
       </div>
     </div>
     <div class="cabCols" #conceptos></div>
