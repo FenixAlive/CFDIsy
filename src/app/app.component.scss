@@ -2,3 +2,9 @@
   margin: 1rem;
 }
 
+.row{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  max-width: 100%;
+}
