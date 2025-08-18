@@ -1,5 +1,5 @@
 import { MatDialog } from '@angular/material/dialog';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, debounceTime, tap } from 'rxjs/operators';
 import { CfdisyDetalleComponent } from './cfdisy-detalle/cfdisy-detalle.component';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, find, Observable } from 'rxjs';
@@ -35,7 +35,37 @@ export class CfdisyService {
     private _snackBar: MatSnackBar,
     private dialog: MatDialog,
     private http: HttpClient
-  ) {}
+  ) {
+    this.getXmlFromLocalStorage();
+  }
+
+  getXmlFromLocalStorage(): void {
+    const localXml = localStorage.getItem('xmlFiles');
+    if (localXml) {
+      const xmls = JSON.parse(localXml);
+      this.xmlFiles.next(xmls);
+      this.filtrarRfc();
+      this.showSnack(
+        `Se han cargado ${xmls.length} cfdi de la memoria local`,
+        'success'
+      );
+    }
+    this.xmlFiles.pipe(debounceTime(500)).subscribe((xmls) => {
+      this.saveXmlToLocalStorage();
+      this.showSnack(
+        'Se agregaron ' + this.countXml + ' archivos CFDI',
+        'success'
+      );
+    });
+  }
+
+  saveXmlToLocalStorage(): void {
+    localStorage.setItem('xmlFiles', JSON.stringify(this.xmlFiles.value));
+    this.showSnack(
+      'Se han guardado los cfdi en la memoria local',
+      'success'
+    );
+  }
 
   showSnack(mess: string, colorClass: string) {
     this._snackBar.open(mess, 'cerrar', {
@@ -56,14 +86,12 @@ export class CfdisyService {
           xml['Complemento']?.['TimbreFiscalDigital']?.['UUID'] as string
         ).toUpperCase();
         if (!uuidxml || uuidxml === uuid) {
+          this.showSnack('El CFDI con UUID ' + uuid + ' ya existe.', 'warning');
           return;
         }
       }
       this.countXml++;
-      this.showSnack(
-        'Se agregaron ' + this.countXml + ' archivos CFDI',
-        'success'
-      );
+      
       file['Comprobante']['Total'] =
         Number(file['Comprobante']['Total']) ?? file['Comprobante']?.['Total'];
       this.validateCfdi(file['Comprobante']).subscribe(
@@ -90,6 +118,7 @@ export class CfdisyService {
     this.tableData.next([]);
     this.countXml = 0;
     this.showSnack('Se han eliminado todos los cfdi', 'mat-accent');
+    this.saveXmlToLocalStorage();
   }
 
   removeXmlFile(uuid: string): void {
@@ -100,6 +129,7 @@ export class CfdisyService {
       this.tableData.value.filter((val) => this.compareUuid(uuid, val))
     );
     this.showSnack('Se ha eliminado el cfdi: ' + uuid, 'info');
+    this.saveXmlToLocalStorage();
   }
 
   compareUuid(uuid: string, xml: any): boolean {
