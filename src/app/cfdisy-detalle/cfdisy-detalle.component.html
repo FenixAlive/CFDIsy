@@ -43,39 +43,74 @@
         <div id="rfcRec">RFC: {{xml["Receptor"]["Rfc"]}}</div>
         <div id="razonRec">Razón Social: {{xml["Receptor"]["Nombre"]}}</div>
         <div id="usoCfdi">Uso CFDI: {{xml["Receptor"]["UsoCFDI"]}}</div>
+        <div id="domicilioRec">Domicilio Fiscal Receptor: {{xml["Receptor"]["DomicilioFiscalReceptor"]}}</div>
+        <div id="regimenRec">Regimen Fiscal Receptor: {{xml["Receptor"]["RegimenFiscalReceptor"]}}</div>
       </div>
     </div>
-    <div class="cabCols" #conceptos></div>
+    <div class="cabCols" id="conceptos">
+      <div class="cabrows borde">
+        <div class="cabrows flexGrow1"><b>Cantidad</b></div>
+        <div class="cabrows flexGrow1"><b>Precio Unitario</b></div>
+        <div class="cabrows flexGrow4"><b>Descripción</b></div>
+        <div class="cabrows flexGrow1"><b>Descuento</b></div>
+        <div class="cabrows flexGrow1"><b>Importe</b></div>
+      </div>
+      <div *ngFor="let concepto of xml['Conceptos']" class="cabCols borde">
+        <div class="cabrows">
+          <div class="cabrows flexGrow1">{{concepto.Cantidad}}</div>
+          <div class="cabrows flexGrow1">{{concepto.ValorUnitario | currency}}</div>
+          <div class="cabrows flexGrow4 textAlL">{{concepto.Descripcion}}</div>
+          <div class="cabrows flexGrow1">{{concepto.Descuento | currency}}</div>
+          <div class="cabrows flexGrow1">{{concepto.Importe | currency}}</div>
+        </div>
+        <div class="cabrows datosAdCol borde">
+          <div class="cabrows flexGrow1"><b>Unidad:</b> {{concepto.Unidad}}</div>
+          <div class="cabrows flexGrow1"><b>Clave Unidad:</b> {{concepto.ClaveUnidad}}</div>
+          <div class="cabrows flexGrow1"><b>Clave Prod/Serv:</b> {{concepto.ClaveProdServ}}</div>
+        </div>
+      </div>
+    </div>
     <div class="cabrows" id="traslaCont">
       <div class="cabColsStart borde minWidth2 flexGrow1" id="trasAdiCont">
-        <div id="formaPago"></div>
-        <div id="metodoPago"></div>
-        <div id="condicionesPago"></div>
-        <div id="tipoCambio"></div>
-        <div id="moneda"></div>
+        <div id="formaPago"><b>Forma de Pago:</b> {{xml['FormaPago']}}</div>
+        <div id="metodoPago"><b>Método de Pago:</b> {{xml['MetodoPago']}}</div>
+        <div id="condicionesPago" *ngIf="xml['CondicionesDePago']"><b>Condiciones de Pago:</b> {{xml['CondicionesDePago']}}</div>
+        <div id="tipoCambio"><b>Tipo de Cambio:</b> {{xml['TipoCambio']}}</div>
+        <div id="moneda"><b>Moneda:</b> {{xml['Moneda']}}</div>
       </div>
       <div class="cabColsStart borde minWidth2 flexGrow1" id="trasCont">
-        <div id="subtotal"></div>
-        <div id="descuento"></div>
-        <div id="subNeto"></div>
-        <div id="impuestos" class="cabCols flexGrow1"></div>
-        <div id="total" class="bordeUpDash"></div>
-        <div id="totalPesos"></div>
+        <div id="subtotal" class="cabrows">
+          <div class="flexGrow1">Subtotal:</div>
+          <div class="flexGrow1">{{xml['SubTotal'] | currency}}</div>
+        </div>
+        <div id="descuento" class="cabrows" *ngIf="xml['Descuento']">
+          <div class="flexGrow1">Descuento:</div>
+          <div class="flexGrow1">{{xml['Descuento'] | currency}}</div>
+        </div>
+        <div id="impuestos" class="cabCols flexGrow1">
+          <div *ngFor="let traslado of xml['Impuestos']?.['Traslados']" class="cabrows">
+            <div class="flexGrow1">IVA {{traslado.TasaOCuota * 100}}%:</div>
+            <div class="flexGrow1">{{traslado.Importe | currency}}</div>
+          </div>
+        </div>
+        <div id="total" class="bordeUpDash cabrows">
+          <div class="flexGrow1"><b>Total:</b></div>
+          <div class="flexGrow1"><b>{{xml['Total'] | currency}}</b></div>
+        </div>
       </div>
     </div>
     <div id="pagos"></div>
-    <div class="cabrows" id="complemento">
+    <div class="cabrows flexGrow1" id="complemento">
       <div class="width20 flexGrow1" id="qr"></div>
       <div class="width75 flexGrow2 borde" id="compCont">
-        <div id="versionCfdi"></div>
-        <div id="fechaTimbre"></div>
-        <div id="certEmi"></div>
-        <div id="certSat"></div>
-        <div id="selloEmi"></div>
-        <div id="selloSat"></div>
-        <div id="cadenaTim"></div>
+        <div id="versionCfdi"><b>Version CFDI:</b> {{xml['Version']}}</div>
+        <div id="fechaTimbre"><b>Fecha Timbrado:</b> {{xml['Complemento']['TimbreFiscalDigital']['FechaTimbrado']}}</div>
+        <div id="certEmi"><b>No. Certificado Emisor:</b> {{xml['NoCertificado']}}</div>
+        <div id="certSat"><b>No. Certificado SAT:</b> {{xml['Complemento']['TimbreFiscalDigital']['NoCertificadoSAT']}}</div>
+        <div id="selloEmi" class="wrap-text"><b>Sello Digital del CFDI:</b> {{xml['Sello']}}</div>
+        <div id="selloSat" class="wrap-text"><b>Sello Digital del SAT:</b> {{xml['Complemento']['TimbreFiscalDigital']['SelloSAT']}}</div>
+        <div id="cadenaTim" class="wrap-text"><b>Cadena Original del Complemento de Certificación Digital del SAT:</b> ||{{xml['Complemento']['TimbreFiscalDigital']['Version']}}|{{xml['Complemento']['TimbreFiscalDigital']['UUID']}}|{{xml['Complemento']['TimbreFiscalDigital']['FechaTimbrado']}}|{{xml['Complemento']['TimbreFiscalDigital']['RfcProvCertif']}}|{{xml['Sello']}}||</div>
       </div>
     </div>
-    <pre style="overflow: auto; text-align: left;">{{preXml}}</pre>
   </div>
 </div>
