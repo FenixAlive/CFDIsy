@@ -60,7 +60,7 @@
     <h3 class="section-title">Documentos Relacionados (Tipo: {{ relGroup.TipoRelacion }})</h3>
     <ul class="uuid-list">
       <li *ngFor="let rel of getRelatedUUIDs(relGroup)">
-        {{ rel.UUID }}
+        {{ $any(rel).UUID }}
       </li>
     </ul>
   </section>
@@ -118,7 +118,7 @@
         <ng-container *ngFor="let concepto of conceptos">
           <tr class="main-row">
             <td>{{ concepto.Cantidad }}</td>
-            <td>{{ concepto.ClaveUnidad }} <small *ngIf="conceptos.Unidad">({{ conceptos.Unidad }})</small></td>
+            <td>{{ concepto.ClaveUnidad }} <small *ngIf="concepto.Unidad">({{ concepto.Unidad }})</small></td>
             <td>{{ concepto.ClaveProdServ }}</td>
             <td>{{ concepto.Descripcion }}</td>
             <td>{{ concepto.ValorUnitario | currency }}</td>
