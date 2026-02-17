@@ -1,7 +1,7 @@
 <div class="cfdi-detail-container" *ngIf="xml">
   <!-- Valid Code / Status -->
   <div class="status-banner {{ xml['Status'] }}" *ngIf="xml['Valid'] || xml['Status']">
-    {{ xml['Valid'] || 'CFDI pendiente de validación o sin respuesta del SAT.' }}
+    {{ xml['Valid'] ? 'Estado: ' + xml['Valid'] : 'CFDI pendiente de validación o sin respuesta del SAT.' }}
   </div>
 
   <!-- Header Info -->

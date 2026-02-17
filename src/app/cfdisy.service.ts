@@ -96,9 +96,14 @@ export class CfdisyService {
         Number(file['Comprobante']['Total']) ?? file['Comprobante']?.['Total'];
       this.validateCfdi(file['Comprobante']).subscribe(
         (val: string) => {
-          file['Comprobante']['Valid'] = val;
-          if (val.includes('<a:Estado>Vigente</a:Estado>')) {
+          const match = val.match(/<a:Estado>(.*?)<\/a:Estado>/);
+          const estado = match ? match[1] : 'No se pudo validar';
+          file['Comprobante']['Valid'] = estado;
+
+          if (estado === 'Vigente') {
             file['Comprobante']['Status'] = 'success';
+          } else if (estado === 'Cancelado') {
+            file['Comprobante']['Status'] = 'danger';
           } else {
             file['Comprobante']['Status'] = 'info';
           }
