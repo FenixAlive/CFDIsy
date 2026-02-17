@@ -1,4 +1,4 @@
-<div class="cfdi-detail-container">
+<div class="cfdi-detail-container" *ngIf="xml">
   <!-- Valid Code / Status -->
   <div class="status-banner {{ xml['Status'] }}" *ngIf="xml['Valid'] || xml['Status']">
     {{ xml['Valid'] || 'CFDI pendiente de validación o sin respuesta del SAT.' }}
@@ -118,7 +118,7 @@
         <ng-container *ngFor="let concepto of conceptos">
           <tr class="main-row">
             <td>{{ concepto.Cantidad }}</td>
-            <td>{{ concepto.ClaveUnidad }} <small *ngIf="concepto.Unidad">({{ concepto.Unidad }})</small></td>
+            <td>{{ concepto.ClaveUnidad }} <small *ngIf="conceptos.Unidad">({{ conceptos.Unidad }})</small></td>
             <td>{{ concepto.ClaveProdServ }}</td>
             <td>{{ concepto.Descripcion }}</td>
             <td>{{ concepto.ValorUnitario | currency }}</td>
@@ -258,10 +258,13 @@
           <span class="label">Sello del SAT:</span>
           <div class="stamp-box">{{ xml?.Complemento?.TimbreFiscalDigital?.SelloSAT }}</div>
         </div>
+        <div class="field-item small" *ngIf="xml?.Complemento?.TimbreFiscalDigital">
+          <span class="label">Cadena Original del Complemento de Certificación Digital del SAT:</span>
+          <div class="stamp-box">
+            ||{{xml['Complemento']['TimbreFiscalDigital']['Version']}}|{{xml['Complemento']['TimbreFiscalDigital']['UUID']}}|{{xml['Complemento']['TimbreFiscalDigital']['FechaTimbrado']}}|{{xml['Complemento']['TimbreFiscalDigital']['RfcProvCertif']}}|{{xml['Sello']}}||
+          </div>
+        </div>
       </div>
     </div>
   </section>
-
-  <!-- Raw Data for Debugging (optional, keep it clean or remove if requested) -->
-  <!-- <pre class="raw-data">{{ xml | json }}</pre> -->
 </div>

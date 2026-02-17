@@ -57,9 +57,7 @@ export class CfdisyTableComponent implements OnInit {
         data: any,
         sortHeaderId: string
       ): string => {
-        return sortHeaderId
-          .split('.')
-          .reduce((acc, key) => acc && acc[key], data);
+        return sortHeaderId.split('.').reduce((acc, key) => acc?.[key], data);
       };
     });
     this.cfdisyService.filtro.valueChanges
@@ -78,8 +76,8 @@ export class CfdisyTableComponent implements OnInit {
     });
   }
 
-  detalleXmlFile(xml: any): boolean {
-    this.cfdisyService.detalleXmlFile(xml);
+  detailXmlFile(xml: any): boolean {
+    this.cfdisyService.detailXmlFile(xml);
     return false;
   }
 

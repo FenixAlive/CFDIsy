@@ -19,10 +19,29 @@
     text-align: center;
     font-size: 13px;
 
-    &.success { background-color: #e6f7ef; color: #107c10; border: 1px solid #c2e9d7; }
-    &.info { background-color: #e7f3ff; color: #0078d4; border: 1px solid #cce4ff; }
-    &.warning { background-color: #fff4ce; color: #7a5e00; border: 1px solid #fde79a; }
-    &.danger { background-color: #fde7e9; color: #a4262c; border: 1px solid #f8ccd2; }
+    &.success {
+      background-color: #e6f7ef;
+      color: #107c10;
+      border: 1px solid #c2e9d7;
+    }
+
+    &.info {
+      background-color: #e7f3ff;
+      color: #0078d4;
+      border: 1px solid #cce4ff;
+    }
+
+    &.warning {
+      background-color: #fff4ce;
+      color: #7a5e00;
+      border: 1px solid #fde79a;
+    }
+
+    &.danger {
+      background-color: #fde7e9;
+      color: #a4262c;
+      border: 1px solid #f8ccd2;
+    }
   }
 
   // Common Section Components
@@ -57,8 +76,13 @@
     }
 
     &.small {
-      .label { font-size: 10px; }
-      .value { font-size: 12px; }
+      .label {
+        font-size: 10px;
+      }
+
+      .value {
+        font-size: 12px;
+      }
     }
   }
 
@@ -79,7 +103,13 @@
 
       .field-item {
         margin-bottom: 0;
-        &.uuid .value { font-family: 'Courier New', Courier, monospace; font-size: 16px; font-weight: 700; color: #0056b3; }
+
+        &.uuid .value {
+          font-family: 'Courier New', Courier, monospace;
+          font-size: 16px;
+          font-weight: 700;
+          color: #0056b3;
+        }
       }
     }
 
@@ -91,8 +121,17 @@
   }
 
   // Grids
-  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
 
   // Party Cards
   .parties-container {
@@ -116,13 +155,25 @@
         padding-bottom: 4px;
       }
 
-      .party-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; color: #1e293b; }
-      .party-rfc { font-size: 13px; font-weight: 600; color: #64748b; margin-bottom: 12px; }
+      .party-name {
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 4px;
+        color: #1e293b;
+      }
+
+      .party-rfc {
+        font-size: 13px;
+        font-weight: 600;
+        color: #64748b;
+        margin-bottom: 12px;
+      }
     }
   }
 
   // Tables
-  .conceptos-table, .nested-table {
+  .conceptos-table,
+  .nested-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 8px;
@@ -145,8 +196,14 @@
 
     .main-row {
       background-color: #fff;
-      &:hover { background-color: #f8fafc; }
-      td { font-weight: 500; }
+
+      &:hover {
+        background-color: #f8fafc;
+      }
+
+      td {
+        font-weight: 500;
+      }
     }
 
     .details-row td {
@@ -165,8 +222,13 @@
 
     .concept-taxes {
       margin-top: 8px;
-      .label { font-size: 11px; font-weight: 700; margin-bottom: 4px; }
-      
+
+      .label {
+        font-size: 11px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
       .tax-tag {
         display: inline-block;
         padding: 2px 8px;
@@ -174,9 +236,18 @@
         margin-right: 8px;
         margin-bottom: 4px;
         font-size: 11px;
-        
-        &.tras { background-color: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
-        &.ret { background-color: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+
+        &.tras {
+          background-color: #e0f2fe;
+          color: #0369a1;
+          border: 1px solid #bae6fd;
+        }
+
+        &.ret {
+          background-color: #fef2f2;
+          color: #b91c1c;
+          border: 1px solid #fecaca;
+        }
       }
     }
   }
@@ -190,7 +261,11 @@
       margin-bottom: 16px;
       background-color: #fff;
 
-      .sub-title { font-weight: 700; margin: 16px 0 8px 0; color: #1e293b; }
+      .sub-title {
+        font-weight: 700;
+        margin: 16px 0 8px 0;
+        color: #1e293b;
+      }
     }
   }
 
@@ -208,39 +283,78 @@
 
     .totals-summary {
       min-width: 250px;
-      
+
       .field-item {
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 6px;
 
-        .label { margin-bottom: 0; font-size: 12px; }
-        .value { font-size: 15px; }
+        .label {
+          margin-bottom: 0;
+          font-size: 12px;
+        }
+
+        .value {
+          font-size: 15px;
+        }
 
         &.highlight {
           margin-top: 12px;
           padding-top: 12px;
           border-top: 1px solid #e2e8f0;
-          .label { font-size: 16px; font-weight: 800; color: #000; }
-          .value { font-size: 20px; font-weight: 800; color: #000; }
+
+          .label {
+            font-size: 16px;
+            font-weight: 800;
+            color: #000;
+          }
+
+          .value {
+            font-size: 20px;
+            font-weight: 800;
+            color: #000;
+          }
         }
 
         &.pesos {
-          .label { font-size: 11px; color: #64748b; font-style: italic; }
-          .value { font-size: 13px; color: #64748b; font-weight: 600; }
+          .label {
+            font-size: 11px;
+            color: #64748b;
+            font-style: italic;
+          }
+
+          .value {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 600;
+          }
         }
       }
     }
 
     .tax-summary {
       min-width: 200px;
-      .summary-title { font-weight: 700; margin-bottom: 12px; color: #64748b; font-size: 13px; }
+
+      .summary-title {
+        font-weight: 700;
+        margin-bottom: 12px;
+        color: #64748b;
+        font-size: 13px;
+      }
+
       .field-item {
         flex-direction: row;
         justify-content: space-between;
-        .label { margin-bottom: 0; font-size: 12px; }
-        .value { font-size: 14px; }
+
+        .label {
+          margin-bottom: 0;
+          font-size: 12px;
+        }
+
+        .value {
+          font-size: 14px;
+        }
       }
     }
   }
@@ -269,7 +383,7 @@
 
       .stamp-details {
         flex: 1;
-        
+
         .stamp-box {
           background-color: #fff;
           border: 1px solid #e2e8f0;
@@ -301,25 +415,35 @@
 .uuid-list {
   list-style: none;
   padding: 0;
+
   li {
     font-family: 'Courier New', Courier, monospace;
     font-size: 13px;
     color: #0369a1;
     margin-bottom: 4px;
-    &:before { content: "• "; color: #cbd5e1; }
+
+    &:before {
+      content: "• ";
+      color: #cbd5e1;
+    }
   }
 }
 
 @media (max-width: 768px) {
   .cfdi-detail-container {
     padding: 15px;
-    .parties-container, .grid-3, .grid-4 {
+
+    .parties-container,
+    .grid-3,
+    .grid-4 {
       grid-template-columns: 1fr;
     }
+
     .cfdi-footer .summary-container {
       flex-direction: column;
       gap: 20px;
     }
+
     .stamps-section .stamps-grid {
       flex-direction: column;
       align-items: center;

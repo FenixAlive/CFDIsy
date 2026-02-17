@@ -11,10 +11,14 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
   styleUrls: ['./cfdisy-detalle.component.scss'],
 })
 export class CfdisyDetalleComponent implements OnInit {
-  constructor(@Inject(MAT_DIALOG_DATA) public xml: any) { }
+  xml: any;
+
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
+    this.xml = data?.xml || data;
+  }
 
   ngOnInit(): void {
-    console.log(this.xml);
+    console.log('CFDI Data:', this.xml);
   }
 
   get subtotalNeto(): number {

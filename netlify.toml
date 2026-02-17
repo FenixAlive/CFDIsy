@@ -1,5 +1,5 @@
 [[redirects]]
-from= "/api/sat"
-to = "https://consultaqr.facturaelectronica.sat.gob.mx/ConsultaCFDIService.svc?wsdl"
-status = 201
-force = true
+  from = "*/api/sat"
+  to = "https://consultaqr.facturaelectronica.sat.gob.mx/ConsultaCFDIService.svc?wsdl"
+  status = 200
+  force = true
