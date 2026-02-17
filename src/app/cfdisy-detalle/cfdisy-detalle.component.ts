@@ -16,9 +16,11 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 export class CfdisyDetalleComponent implements OnInit {
   @ViewChild('appContainer') appContainer!: ElementRef;
   @ViewChild('conceptos') conceptos!: ElementRef;
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {}
+  constructor(@Inject(MAT_DIALOG_DATA) public xml: any) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log(this.xml)
+  }
 
   //oculta datos hasta que este lista la info
 
@@ -30,6 +32,17 @@ export class CfdisyDetalleComponent implements OnInit {
     } else {
       el.style.display = 'none';
     }
+  }
+
+  calcularSubNeto(): number | string{
+    return Number.parseFloat(this.xml?.SubTotal) ?? 0 - Number.parseFloat(this.xml?.Descuento) ?? 0;
+  }
+
+  totalPesos(): number | string{
+    if(this?.xml?.TipoCambio){
+      return Number.parseFloat(this.xml?.Total) ?? 0 * Number.parseFloat(this.xml?.TipoCambio) ?? 1;
+    }
+    return this.xml?.Total;
   }
   /*
   //agrega cabecera de conceptos

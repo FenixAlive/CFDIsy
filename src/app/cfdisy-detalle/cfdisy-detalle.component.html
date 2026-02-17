@@ -1,51 +1,55 @@
+
 <div #appContainer>
   <div class="cabCols" id="container">
-    <div class="cabCols borde" id="validar">
-      <b class="padUD">Esperando revisión de validación</b>
+    <div class="cabCols borde {{ xml['Status'] }} valida" id="validar">
+      {{xml['Valid'] ? xml['Valid'] : "Sin respuesta, intente de nuevo para validar CFDI."}}
     </div>
     <div class="cabCols" id="cabecera">
       <div class="cabrows">
-        <div class="flexGrow1" id="serie"></div>
-        <div class="flexGrow1" id="folio"></div>
-        <div class="flexGrow2" id="uuid"></div>
+        <div class="flexGrow1 borde" id="serie">Serie: {{xml?.Serie ?? '--'}}</div>
+        <div class="flexGrow1 borde" id="folio">Folio: {{xml?.Folio ?? '--'}} </div>
+        <div class="flexGrow2 borde" id="uuid">UUID: {{xml?.Complemento?.TimbreFiscalDigital?.UUID}}</div>
       </div>
       <div id="" class="cabrows">
-        <div class="flexGrow1" id="fecha"></div>
-        <div class="flexGrow1" id="tipoComp"></div>
-        <div class="flexGrow1" id="lugarExp"></div>
+        <div class="flexGrow1 borde" id="fecha">Fecha: {{xml?.Fecha ?? '--' | date:'medium'}}</div>
+        <div class="flexGrow1 borde" id="tipoComp">Tipo de Comprobante: {{xml?.TipoDeComprobante ?? '--'}}</div>
+        <div class="flexGrow1 borde" id="lugarExp">Lugar de Expedición: {{xml?.LugarExpedicion ?? '--'}}</div>
       </div>
     </div>
     <div id="relacionadosAll"></div>
     <div class="cabrows" id="emirec">
-      <div class="cabcols borde flexGrow1 minWidth2" id="emisorcont">
+      <div class="cabColsStart borde flexGrow1 minWidth2" id="emisorcont">
         <div class="bordeDownDash" id="emTitulo"><b>Emisor</b></div>
-        <div id="rfcEmi"></div>
-        <div id="razonEmi"></div>
-        <div id="regimenEmi"></div>
+        <div id="rfcEmi" class="textAlL">RFC: {{xml?.Emisor?.Rfc ?? '--'}}</div>
+        <div id="razonEmi" class="textAlL">Nombre: {{xml?.Emisor?.Nombre ?? '--'}}</div>
+        <div id="regimenEmi" class="textAlL">Regimen Fiscal: {{xml?.Emisor?.RegimenFiscal ?? '--'}}</div>
       </div>
-      <div class="cabcols borde flexGrow1 minWidth2" id="receptorcont">
+      <div class="cabColsStart borde flexGrow1 minWidth2" id="receptorcont">
         <div class="bordeDownDash" id="recTitulo"><b>Receptor</b></div>
-        <div id="rfcRec"></div>
-        <div id="razonRec"></div>
-        <div id="usoCfdi"></div>
+        <div id="rfcRec" class="textAlL">RFC: {{xml?.Receptor?.Rfc ?? '--'}}</div>
+        <div id="razonRec" class="textAlL">Nombre: {{xml?.Receptor?.Nombre ?? '--'}}</div>
+        <div id="usoCfdi" class="textAlL">Uso del CFDI: {{xml?.Receptor?.UsoCFDI ?? '--'}}</div>
       </div>
     </div>
     <div class="cabCols" #conceptos></div>
     <div class="cabrows" id="traslaCont">
       <div class="cabColsStart borde minWidth2 flexGrow1" id="trasAdiCont">
-        <div id="formaPago"></div>
-        <div id="metodoPago"></div>
-        <div id="condicionesPago"></div>
-        <div id="tipoCambio"></div>
-        <div id="moneda"></div>
+        <div *ngIf="xml?.FormaPago" id="formaPago" class="textAlL">Forma de Pago: {{xml?.FormaPago ?? '--'}}</div>
+        <div *ngIf="xml?.MetodoPago" id="metodoPago" class="textAlL">Método de Pago: {{xml?.MetodoPago ?? '--'}}</div>
+        <div *ngIf="xml?.CondicionesPago" id="condicionesPago" class="textAlL">Condiciones de Pago: {{xml?.CondicionesPago ?? '--'}}</div>
+        <div *ngIf="xml?.TipoCambio" id="tipoCambio" class="textAlL">Tipo de Cambio: {{xml?.TipoCambio ?? '1'  | currency}}</div>
+        <div *ngIf="xml?.Moneda" id="moneda" class="textAlL">Moneda: {{xml?.Moneda ?? '--'}}</div>
       </div>
-      <div class="cabColsStart borde minWidth2 flexGrow1" id="trasCont">
-        <div id="subtotal"></div>
-        <div id="descuento"></div>
-        <div id="subNeto"></div>
-        <div id="impuestos" class="cabCols flexGrow1"></div>
-        <div id="total" class="bordeUpDash"></div>
-        <div id="totalPesos"></div>
+      <div class="cabColsStart borde minWidth2 flexGrow1 textAlL" id="trasCont">
+        <div id="subtotal" class="textAlL">Subtotal: {{xml?.SubTotal | currency}}</div>
+        <div *ngIf="xml?.Descuento" id="descuento" class="textAlL">{{xml?.Descuento ?? '0'  | currency}}</div>
+        <div *ngIf="xml?.Descuento" id="subNeto" class="textAlL">Suma Subtotal: {{calcularSubNeto() | currency}}</div>
+        <div id="impuestos" class="cabCols flexGrow1 textAlL">
+          <div class="textAlL">Trasladados: {{xml?.Impuestos?.TotalImpuestosTrasladados ?? 0  | currency}}</div>
+          <div class="textAlL">Retenidos: {{xml?.Impuestos?.TotalImpuestosRetenidos ?? 0 | currency}}</div>
+        </div>
+        <div id="total" class="bordeUpDash textAlL"><div class="textAlL">Total:</div> <div class="textAlR">{{xml?.Total | currency}}</div></div>
+        <div id="totalPesos" class="textAlL" *ngIf="xml?.TipoCambio && xml?.TipoCambio != 1"><div class="textAlL">Total Pesos:</div> <div class="textAlR">{{totalPesos() | currency}}</div></div>
       </div>
     </div>
     <div id="pagos"></div>
@@ -63,3 +67,5 @@
     </div>
   </div>
 </div>
+<div>Se encuentra en construcción información:</div>
+<pre style="text-align: start;">{{xml | json}}</pre>

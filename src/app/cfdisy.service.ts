@@ -178,7 +178,8 @@ export class CfdisyService {
 
   detalleXmlFile(xml: any): void {
     this.dialog.open(CfdisyDetalleComponent, {
-      data: { xml },
+      height: '98vh',
+      data: xml ,
     });
   }
 

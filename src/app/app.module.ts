@@ -22,6 +22,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
 import { CfdisyDetalleComponent } from './cfdisy-detalle/cfdisy-detalle.component';
 import { CfdisyValidateComponent } from './cfdisy-validate/cfdisy-validate.component';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [AppComponent, CfdisyTableComponent, CfdisyDetalleComponent, CfdisyValidateComponent],
@@ -45,6 +46,7 @@ import { CfdisyValidateComponent } from './cfdisy-validate/cfdisy-validate.compo
     MatSortModule,
     MatSnackBarModule,
     MatDialogModule,
+    CommonModule
   ],
   providers: [],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
