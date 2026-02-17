@@ -1,71 +1,267 @@
+<div class="cfdi-detail-container">
+  <!-- Valid Code / Status -->
+  <div class="status-banner {{ xml['Status'] }}" *ngIf="xml['Valid'] || xml['Status']">
+    {{ xml['Valid'] || 'CFDI pendiente de validación o sin respuesta del SAT.' }}
+  </div>
 
-<div #appContainer>
-  <div class="cabCols" id="container">
-    <div class="cabCols borde {{ xml['Status'] }} valida" id="validar">
-      {{xml['Valid'] ? xml['Valid'] : "Sin respuesta, intente de nuevo para validar CFDI."}}
-    </div>
-    <div class="cabCols" id="cabecera">
-      <div class="cabrows">
-        <div class="flexGrow1 borde" id="serie">Serie: {{xml?.Serie ?? '--'}}</div>
-        <div class="flexGrow1 borde" id="folio">Folio: {{xml?.Folio ?? '--'}} </div>
-        <div class="flexGrow2 borde" id="uuid">UUID: {{xml?.Complemento?.TimbreFiscalDigital?.UUID}}</div>
+  <!-- Header Info -->
+  <header class="cfdi-header">
+    <div class="header-main">
+      <div class="field-item">
+        <span class="label">Serie/Folio:</span>
+        <span class="value">{{ xml?.Serie ?? '' }}{{ xml?.Folio ?? '--' }}</span>
       </div>
-      <div id="" class="cabrows">
-        <div class="flexGrow1 borde" id="fecha">Fecha: {{xml?.Fecha ?? '--' | date:'medium'}}</div>
-        <div class="flexGrow1 borde" id="tipoComp">Tipo de Comprobante: {{xml?.TipoDeComprobante ?? '--'}}</div>
-        <div class="flexGrow1 borde" id="lugarExp">Lugar de Expedición: {{xml?.LugarExpedicion ?? '--'}}</div>
+      <div class="field-item uuid">
+        <span class="label">UUID:</span>
+        <span class="value">{{ xml?.Complemento?.TimbreFiscalDigital?.UUID ?? '--' }}</span>
       </div>
     </div>
-    <div id="relacionadosAll"></div>
-    <div class="cabrows" id="emirec">
-      <div class="cabColsStart borde flexGrow1 minWidth2" id="emisorcont">
-        <div class="bordeDownDash" id="emTitulo"><b>Emisor</b></div>
-        <div id="rfcEmi" class="textAlL">RFC: {{xml?.Emisor?.Rfc ?? '--'}}</div>
-        <div id="razonEmi" class="textAlL">Nombre: {{xml?.Emisor?.Nombre ?? '--'}}</div>
-        <div id="regimenEmi" class="textAlL">Regimen Fiscal: {{xml?.Emisor?.RegimenFiscal ?? '--'}}</div>
+    <div class="header-details">
+      <div class="field-item">
+        <span class="label">Versión CFDI:</span>
+        <span class="value">{{ xml?.Version ?? '4.0' }}</span>
       </div>
-      <div class="cabColsStart borde flexGrow1 minWidth2" id="receptorcont">
-        <div class="bordeDownDash" id="recTitulo"><b>Receptor</b></div>
-        <div id="rfcRec" class="textAlL">RFC: {{xml?.Receptor?.Rfc ?? '--'}}</div>
-        <div id="razonRec" class="textAlL">Nombre: {{xml?.Receptor?.Nombre ?? '--'}}</div>
-        <div id="usoCfdi" class="textAlL">Uso del CFDI: {{xml?.Receptor?.UsoCFDI ?? '--'}}</div>
+      <div class="field-item">
+        <span class="label">Fecha Emisión:</span>
+        <span class="value">{{ xml?.Fecha | date:'medium' }}</span>
+      </div>
+      <div class="field-item">
+        <span class="label">Tipo de Comprobante:</span>
+        <span class="value">{{ xml?.TipoDeComprobante }}</span>
+      </div>
+      <div class="field-item">
+        <span class="label">Lugar de Expedición:</span>
+        <span class="value">{{ xml?.LugarExpedicion }}</span>
       </div>
     </div>
-    <div class="cabCols" #conceptos></div>
-    <div class="cabrows" id="traslaCont">
-      <div class="cabColsStart borde minWidth2 flexGrow1" id="trasAdiCont">
-        <div *ngIf="xml?.FormaPago" id="formaPago" class="textAlL">Forma de Pago: {{xml?.FormaPago ?? '--'}}</div>
-        <div *ngIf="xml?.MetodoPago" id="metodoPago" class="textAlL">Método de Pago: {{xml?.MetodoPago ?? '--'}}</div>
-        <div *ngIf="xml?.CondicionesPago" id="condicionesPago" class="textAlL">Condiciones de Pago: {{xml?.CondicionesPago ?? '--'}}</div>
-        <div *ngIf="xml?.TipoCambio" id="tipoCambio" class="textAlL">Tipo de Cambio: {{xml?.TipoCambio ?? '1'  | currency}}</div>
-        <div *ngIf="xml?.Moneda" id="moneda" class="textAlL">Moneda: {{xml?.Moneda ?? '--'}}</div>
+  </header>
+
+  <!-- Global Info (CFDI 4.0) -->
+  <section class="global-info" *ngIf="xml?.InformacionGlobal">
+    <h3 class="section-title">Información Global</h3>
+    <div class="grid-3">
+      <div class="field-item">
+        <span class="label">Periodicidad:</span>
+        <span class="value">{{ xml.InformacionGlobal.Periodicidad }}</span>
       </div>
-      <div class="cabColsStart borde minWidth2 flexGrow1 textAlL" id="trasCont">
-        <div id="subtotal" class="textAlL">Subtotal: {{xml?.SubTotal | currency}}</div>
-        <div *ngIf="xml?.Descuento" id="descuento" class="textAlL">{{xml?.Descuento ?? '0'  | currency}}</div>
-        <div *ngIf="xml?.Descuento" id="subNeto" class="textAlL">Suma Subtotal: {{calcularSubNeto() | currency}}</div>
-        <div id="impuestos" class="cabCols flexGrow1 textAlL">
-          <div class="textAlL">Trasladados: {{xml?.Impuestos?.TotalImpuestosTrasladados ?? 0  | currency}}</div>
-          <div class="textAlL">Retenidos: {{xml?.Impuestos?.TotalImpuestosRetenidos ?? 0 | currency}}</div>
+      <div class="field-item">
+        <span class="label">Meses:</span>
+        <span class="value">{{ xml.InformacionGlobal.Meses }}</span>
+      </div>
+      <div class="field-item">
+        <span class="label">Año:</span>
+        <span class="value">{{ xml.InformacionGlobal['Año'] }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Documents -->
+  <section class="related-docs" *ngFor="let relGroup of cfdiRelacionados">
+    <h3 class="section-title">Documentos Relacionados (Tipo: {{ relGroup.TipoRelacion }})</h3>
+    <ul class="uuid-list">
+      <li *ngFor="let rel of getRelatedUUIDs(relGroup)">
+        {{ rel.UUID }}
+      </li>
+    </ul>
+  </section>
+
+  <!-- Emisor & Receptor -->
+  <div class="parties-container">
+    <div class="party-card emisor">
+      <h3 class="party-title">Emisor</h3>
+      <div class="party-content">
+        <div class="party-name">{{ xml?.Emisor?.Nombre }}</div>
+        <div class="party-rfc">RFC: {{ xml?.Emisor?.Rfc }}</div>
+        <div class="field-item" *ngIf="xml?.Emisor?.RegimenFiscal">
+          <span class="label">Régimen Fiscal:</span>
+          <span class="value">{{ xml.Emisor.RegimenFiscal }}</span>
         </div>
-        <div id="total" class="bordeUpDash textAlL"><div class="textAlL">Total:</div> <div class="textAlR">{{xml?.Total | currency}}</div></div>
-        <div id="totalPesos" class="textAlL" *ngIf="xml?.TipoCambio && xml?.TipoCambio != 1"><div class="textAlL">Total Pesos:</div> <div class="textAlR">{{totalPesos() | currency}}</div></div>
       </div>
     </div>
-    <div id="pagos"></div>
-    <div class="cabrows" id="complemento">
-      <div class="width20 flexGrow1" id="qr"></div>
-      <div class="width75 flexGrow2 borde" id="compCont">
-        <div id="versionCfdi"></div>
-        <div id="fechaTimbre"></div>
-        <div id="certEmi"></div>
-        <div id="certSat"></div>
-        <div id="selloEmi"></div>
-        <div id="selloSat"></div>
-        <div id="cadenaTim"></div>
+
+    <div class="party-card receptor">
+      <h3 class="party-title">Receptor</h3>
+      <div class="party-content">
+        <div class="party-name">{{ xml?.Receptor?.Nombre }}</div>
+        <div class="party-rfc">RFC: {{ xml?.Receptor?.Rfc }}</div>
+        <div class="field-item" *ngIf="xml?.Receptor?.UsoCFDI">
+          <span class="label">Uso CFDI:</span>
+          <span class="value">{{ xml.Receptor.UsoCFDI }}</span>
+        </div>
+        <div class="field-item" *ngIf="xml?.Receptor?.RegimenFiscalReceptor">
+          <span class="label">Régimen Fiscal Receptor:</span>
+          <span class="value">{{ xml.Receptor.RegimenFiscalReceptor }}</span>
+        </div>
+        <div class="field-item" *ngIf="xml?.Receptor?.DomicilioFiscalReceptor">
+          <span class="label">CP Receptor:</span>
+          <span class="value">{{ xml.Receptor.DomicilioFiscalReceptor }}</span>
+        </div>
       </div>
     </div>
   </div>
+
+  <!-- Conceptos -->
+  <section class="conceptos-section">
+    <h3 class="section-title">Conceptos</h3>
+    <table class="conceptos-table">
+      <thead>
+        <tr>
+          <th>Cant.</th>
+          <th>Unidad</th>
+          <th>Clave P/S</th>
+          <th>Descripción</th>
+          <th>Valor Unit.</th>
+          <th>Importe</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let concepto of conceptos">
+          <tr class="main-row">
+            <td>{{ concepto.Cantidad }}</td>
+            <td>{{ concepto.ClaveUnidad }} <small *ngIf="concepto.Unidad">({{ concepto.Unidad }})</small></td>
+            <td>{{ concepto.ClaveProdServ }}</td>
+            <td>{{ concepto.Descripcion }}</td>
+            <td>{{ concepto.ValorUnitario | currency }}</td>
+            <td>{{ concepto.Importe | currency }}</td>
+          </tr>
+          <!-- Sub-details for Concepto -->
+          <tr class="details-row">
+            <td colspan="6">
+              <div class="concept-details">
+                <span *ngIf="concepto.NoIdentificacion"><strong>No. Identificación:</strong> {{
+                  concepto.NoIdentificacion }} | </span>
+                <span *ngIf="concepto.Descuento"><strong>Descuento:</strong> {{ concepto.Descuento | currency }} |
+                </span>
+                <span *ngIf="concepto.ObjetoImp"><strong>Objeto Impuesto:</strong> {{ concepto.ObjetoImp }}</span>
+
+                <!-- Taxes per concept -->
+                <div class="concept-taxes"
+                  *ngIf="getImpuestosConcepto(concepto).traslados.length || getImpuestosConcepto(concepto).retenciones.length">
+                  <div class="label">Impuestos del concepto:</div>
+                  <div class="tax-tag tras" *ngFor="let t of getImpuestosConcepto(concepto).traslados">
+                    Traslado: {{ t.Impuesto }} | Base: {{ t.Base | currency }} | {{ t.TipoFactor }}: {{ t.TasaOCuota }}
+                    | {{ t.Importe | currency }}
+                  </div>
+                  <div class="tax-tag ret" *ngFor="let r of getImpuestosConcepto(concepto).retenciones">
+                    Retención: {{ r.Impuesto }} | Base: {{ r.Base | currency }} | {{ r.TipoFactor }}: {{ r.TasaOCuota }}
+                    | {{ r.Importe | currency }}
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Complemento de Pago (Pagos 2.0) -->
+  <section class="pagos-section" *ngIf="xml?.Complemento?.Pagos">
+    <h3 class="section-title">Complemento de Recepción de Pagos</h3>
+    <div class="pago-item card" *ngFor="let pago of pagos">
+      <div class="pago-header">
+        <div class="grid-4">
+          <div class="field-item"><span class="label">Fecha Pago:</span><span class="value">{{ pago.FechaPago }}</span>
+          </div>
+          <div class="field-item"><span class="label">Forma Pago:</span><span class="value">{{ pago.FormaDePagoP
+              }}</span></div>
+          <div class="field-item"><span class="label">Moneda:</span><span class="value">{{ pago.MonedaP }}</span></div>
+          <div class="field-item"><span class="label">Monto:</span><span class="value">{{ pago.Monto | currency
+              }}</span></div>
+        </div>
+      </div>
+
+      <!-- Doctos Relacionados in Pago -->
+      <div class="doctos-relacionados" *ngIf="getDocsRelacionados(pago).length">
+        <div class="sub-title">Documentos Pagados</div>
+        <table class="nested-table">
+          <thead>
+            <tr>
+              <th>Id Documento (UUID)</th>
+              <th>Parc.</th>
+              <th>Imp. Saldo Ant.</th>
+              <th>Imp. Pagado</th>
+              <th>Imp. Saldo Insoluto</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let doc of getDocsRelacionados(pago)">
+              <td>{{ doc.IdDocumento }}</td>
+              <td>{{ doc.NumParcialidad }}</td>
+              <td>{{ doc.ImpSaldoAnt | currency }}</td>
+              <td>{{ doc.ImpPagado | currency }}</td>
+              <td>{{ doc.ImpSaldoInsoluto | currency }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Totals & Taxes Summary -->
+  <footer class="cfdi-footer">
+    <div class="summary-container">
+      <div class="tax-summary" *ngIf="xml?.Impuestos">
+        <div class="summary-title">Resumen de Impuestos</div>
+        <div class="field-item" *ngIf="xml.Impuestos.TotalImpuestosTrasladados">
+          <span class="label">Total Trasladados:</span>
+          <span class="value">{{ xml.Impuestos.TotalImpuestosTrasladados | currency }}</span>
+        </div>
+        <div class="field-item" *ngIf="xml.Impuestos.TotalImpuestosRetenidos">
+          <span class="label">Total Retenidos:</span>
+          <span class="value">{{ xml.Impuestos.TotalImpuestosRetenidos | currency }}</span>
+        </div>
+      </div>
+
+      <div class="totals-summary">
+        <div class="field-item">
+          <span class="label">Subtotal:</span>
+          <span class="value">{{ xml?.SubTotal | currency }}</span>
+        </div>
+        <div class="field-item" *ngIf="xml?.Descuento">
+          <span class="label">Descuento:</span>
+          <span class="value">- {{ xml.Descuento | currency }}</span>
+        </div>
+        <div class="field-item highlight">
+          <span class="label">TOTAL:</span>
+          <span class="value">{{ xml?.Total | currency }}</span>
+        </div>
+        <div class="field-item pesos" *ngIf="xml?.TipoCambio && xml?.TipoCambio != 1">
+          <span class="label">Total en MXN (T.C. {{ xml.TipoCambio }}):</span>
+          <span class="value">{{ totalPesos | currency }}</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Certificación & Stamps -->
+  <section class="stamps-section">
+    <div class="stamps-grid">
+      <div class="qr-container">
+        <!-- Assuming we might add QR generation here in the future or keep a placeholder -->
+        <small>QR SAT</small>
+      </div>
+      <div class="stamp-details">
+        <div class="field-item small">
+          <span class="label">No. Certificado Emisor:</span>
+          <span class="value">{{ xml?.NoCertificado }}</span>
+        </div>
+        <div class="field-item small">
+          <span class="label">Folio Fiscal (UUID):</span>
+          <span class="value">{{ xml?.Complemento?.TimbreFiscalDigital?.UUID }}</span>
+        </div>
+        <div class="field-item small">
+          <span class="label">Sello Digital del Emisor:</span>
+          <div class="stamp-box">{{ xml?.Sello }}</div>
+        </div>
+        <div class="field-item small">
+          <span class="label">Sello del SAT:</span>
+          <div class="stamp-box">{{ xml?.Complemento?.TimbreFiscalDigital?.SelloSAT }}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Raw Data for Debugging (optional, keep it clean or remove if requested) -->
+  <!-- <pre class="raw-data">{{ xml | json }}</pre> -->
 </div>
-<div>Se encuentra en construcción información:</div>
-<pre style="text-align: start;">{{xml | json}}</pre>
