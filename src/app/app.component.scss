@@ -1,13 +1,33 @@
-.mat-form-field,
+.mat-form-field {
+  margin: 0.5rem;
+}
+
 button {
   margin: 0.5rem;
+}
+
+mat-toolbar {
+  height: auto;
+  min-height: 64px;
+  padding: 1rem;
+
+  span {
+    font-weight: 700;
+    font-size: 20px;
+    color: #1a1a1a;
+  }
 }
 
 .row {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  max-width: 100%;
+  justify-content: flex-end;
+  gap: 8px;
+
+  button {
+    margin: 0;
+  }
 }
 
 .filters-container {
@@ -25,13 +45,53 @@ button {
   }
 }
 
-.mat-form-field {
-  margin: 0.5rem;
-}
+@media (max-width: 768px) {
+  mat-toolbar {
+    flex-direction: column !important;
+    align-items: center !important;
+    padding: 1.5rem 1rem;
+    gap: 16px;
 
-@media (max-width: 600px) {
+    span {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .row {
+      justify-content: center;
+      width: 100%;
+
+      button {
+        flex: 1 1 140px; // Permite que los botones crezcan pero tengan un mínimo
+        min-height: 48px;
+        font-size: 13px;
+        line-height: 1.2;
+      }
+    }
+  }
+
   .filters-container {
     flex-direction: column;
     align-items: stretch;
+
+    .mat-form-field {
+      width: 100%;
+      margin: 0.5rem 0;
+    }
+  }
+
+  .rfc-toggle-container {
+    flex-direction: column;
+    align-items: center;
+    margin: 1rem 0;
+
+    mat-button-toggle-group {
+      width: 100%;
+      display: flex;
+
+      mat-button-toggle {
+        flex: 1;
+      }
+    }
   }
 }
