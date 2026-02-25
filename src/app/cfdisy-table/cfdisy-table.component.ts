@@ -44,7 +44,7 @@ export class CfdisyTableComponent implements OnInit {
   @ViewChild('paginator') paginator!: MatPaginator;
   @ViewChild(MatSort) matSort!: MatSort;
 
-  constructor(private cfdisyService: CfdisyService) {}
+  constructor(private cfdisyService: CfdisyService) { }
 
   ngOnInit(): void {
     this.cfdisyService.tableData.pipe(debounceTime(100)).subscribe((val) => {

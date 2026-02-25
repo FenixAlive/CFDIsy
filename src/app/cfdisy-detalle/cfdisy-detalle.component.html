@@ -140,61 +140,65 @@
   <!-- Conceptos -->
   <section class="conceptos-section">
     <h3 class="section-title">Conceptos</h3>
-    <table class="conceptos-table">
-      <thead>
-        <tr>
-          <th>Cant.</th>
-          <th>Unidad</th>
-          <th>Clave P/S</th>
-          <th>Descripción</th>
-          <th>Valor Unit.</th>
-          <th>Importe</th>
-        </tr>
-      </thead>
-      <tbody>
-        <ng-container *ngFor="let concepto of conceptos">
-          <tr class="main-row">
-            <td>{{ concepto.Cantidad }}</td>
-            <td>{{ concepto.ClaveUnidad }} <small *ngIf="concepto.Unidad">({{ concepto.Unidad }})</small></td>
-            <td>{{ concepto.ClaveProdServ }} <small *ngIf="claveProdServMap[concepto.ClaveProdServ]">({{
-                claveProdServMap[concepto.ClaveProdServ] }})</small></td>
-            <td>{{ concepto.Descripcion }}</td>
-            <td>{{ concepto.ValorUnitario | currency }}</td>
-            <td>{{ concepto.Importe | currency }}</td>
+    <div class="concepts-wrapper">
+      <table class="conceptos-table">
+        <thead>
+          <tr>
+            <th>Cant.</th>
+            <th>Unidad</th>
+            <th>Clave P/S</th>
+            <th>Descripción</th>
+            <th>Valor Unit.</th>
+            <th>Importe</th>
           </tr>
-          <!-- Sub-details for Concepto -->
-          <tr class="details-row">
-            <td colspan="6">
-              <div class="concept-details">
-                <span *ngIf="concepto.NoIdentificacion"><strong>No. Identificación:</strong> {{
-                  concepto.NoIdentificacion }} | </span>
-                <span *ngIf="xml.Descuento"><strong>Descuento:</strong> {{ concepto.Descuento | currency }} |
-                </span>
-                <span *ngIf="concepto.ObjetoImp"><strong>Objeto Impuesto:</strong> {{ concepto.ObjetoImp }} <small
-                    *ngIf="objetoImpuestoMap[concepto.ObjetoImp]">({{
-                    objetoImpuestoMap[concepto.ObjetoImp] }})</small></span>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let concepto of conceptos">
+            <tr class="main-row">
+              <td data-label="Cant.">{{ concepto.Cantidad }}</td>
+              <td data-label="Unidad">{{ concepto.ClaveUnidad }} <small *ngIf="concepto.Unidad">({{ concepto.Unidad
+                  }})</small></td>
+              <td data-label="Clave P/S">{{ concepto.ClaveProdServ }} <small
+                  *ngIf="claveProdServMap[concepto.ClaveProdServ]">({{
+                  claveProdServMap[concepto.ClaveProdServ] }})</small></td>
+              <td data-label="Descripción">{{ concepto.Descripcion }}</td>
+              <td data-label="Valor Unit.">{{ concepto.ValorUnitario | currency }}</td>
+              <td data-label="Importe">{{ concepto.Importe | currency }}</td>
+            </tr>
+            <!-- Sub-details for Concepto -->
+            <tr class="details-row">
+              <td colspan="6">
+                <div class="concept-details">
+                  <span *ngIf="concepto.NoIdentificacion"><strong>No. Identificación:</strong> {{
+                    concepto.NoIdentificacion }} | </span>
+                  <span *ngIf="xml.Descuento"><strong>Descuento:</strong> {{ concepto.Descuento | currency }} |
+                  </span>
+                  <span *ngIf="concepto.ObjetoImp"><strong>Objeto Impuesto:</strong> {{ concepto.ObjetoImp }} <small
+                      *ngIf="objetoImpuestoMap[concepto.ObjetoImp]">({{
+                      objetoImpuestoMap[concepto.ObjetoImp] }})</small></span>
 
-                <!-- Taxes per concept -->
-                <div class="concept-taxes"
-                  *ngIf="getImpuestosConcepto(concepto).traslados.length || getImpuestosConcepto(concepto).retenciones.length">
-                  <div class="label">Impuestos del concepto:</div>
-                  <div class="tax-tag tras" *ngFor="let t of getImpuestosConcepto(concepto).traslados">
-                    Traslado: {{ impuestoMap[t.Impuesto] ?? t.Impuesto }} | Base: {{ t.Base | currency }} | {{
-                    t.TipoFactor }}: {{ t.TasaOCuota }}
-                    | {{ t.Importe | currency }}
-                  </div>
-                  <div class="tax-tag ret" *ngFor="let r of getImpuestosConcepto(concepto).retenciones">
-                    Retención: {{ impuestoMap[r.Impuesto] ?? r.Impuesto }} | Base: {{ r.Base | currency }} | {{
-                    r.TipoFactor }}: {{ r.TasaOCuota }}
-                    | {{ r.Importe | currency }}
+                  <!-- Taxes per concept -->
+                  <div class="concept-taxes"
+                    *ngIf="getImpuestosConcepto(concepto).traslados.length || getImpuestosConcepto(concepto).retenciones.length">
+                    <div class="label">Impuestos del concepto:</div>
+                    <div class="tax-tag tras" *ngFor="let t of getImpuestosConcepto(concepto).traslados">
+                      Traslado: {{ impuestoMap[t.Impuesto] ?? t.Impuesto }} | Base: {{ t.Base | currency }} | {{
+                      t.TipoFactor }}: {{ t.TasaOCuota }}
+                      | {{ t.Importe | currency }}
+                    </div>
+                    <div class="tax-tag ret" *ngFor="let r of getImpuestosConcepto(concepto).retenciones">
+                      Retención: {{ impuestoMap[r.Impuesto] ?? r.Impuesto }} | Base: {{ r.Base | currency }} | {{
+                      r.TipoFactor }}: {{ r.TasaOCuota }}
+                      | {{ r.Importe | currency }}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </td>
-          </tr>
-        </ng-container>
-      </tbody>
-    </table>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
   </section>
 
   <!-- Complemento de Pago (Pagos 2.0) -->

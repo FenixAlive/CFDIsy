@@ -211,6 +211,13 @@ export class CfdisyService {
     }
   }
 
+  limpiarFiltros() {
+    this.filtro.reset('');
+    this.rfc.reset('');
+    this.tipoRfc.setValue('');
+    this.tipoRfc.disable();
+  }
+
   detailXmlFile(xml: any): void {
     this.dialog.open(CfdisyDetalleComponent, {
       width: '90vw',
@@ -219,7 +226,7 @@ export class CfdisyService {
     });
   }
 
-  filtrarData(data: any, filter: string): boolean {
+  filtrarData = (data: any, filter: string): boolean => {
     if (!filter || filter === '') {
       return true;
     }
@@ -230,6 +237,7 @@ export class CfdisyService {
         tempStr += val;
       }
     };
+
     check(data['Version']);
     check(data['Fecha']);
     check(data['Complemento']?.['TimbreFiscalDigital']?.['UUID']);

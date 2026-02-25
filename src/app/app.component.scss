@@ -1,10 +1,37 @@
-.mat-form-field, button, .mat-button-toggle-group{
-  margin: 1rem;
+.mat-form-field,
+button {
+  margin: 0.5rem;
 }
 
-.row{
+.row {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   max-width: 100%;
+}
+
+.filters-container {
+  padding: 1rem 0;
+  gap: 1rem;
+}
+
+.rfc-toggle-container {
+  margin: 1rem;
+
+  .toggle-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #666;
+  }
+}
+
+.mat-form-field {
+  margin: 0.5rem;
+}
+
+@media (max-width: 600px) {
+  .filters-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
