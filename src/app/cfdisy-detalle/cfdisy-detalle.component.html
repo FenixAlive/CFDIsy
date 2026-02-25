@@ -1,4 +1,7 @@
 <div class="cfdi-detail-container" *ngIf="xml">
+  <button class="floating-close-btn" (click)="close()" title="Cerrar">
+    &times;
+  </button>
   <!-- Valid Code / Status -->
   <div class="status-banner {{ xml['Status'] }}" *ngIf="xml['Valid'] || xml['Status']">
     {{ xml['Valid'] ? 'Estado: ' + xml['Valid'] : 'CFDI pendiente de validación o sin respuesta del SAT.' }}
@@ -8,8 +11,12 @@
   <header class="cfdi-header">
     <div class="header-main">
       <div class="field-item">
-        <span class="label">Serie/Folio:</span>
-        <span class="value">{{ xml?.Serie ?? '' }}{{ xml?.Folio ?? '--' }}</span>
+        <span class="label">Serie:</span>
+        <span class="value">{{ xml?.Serie ?? '--' }}</span>
+      </div>
+      <div class="field-item">
+        <span class="label">Folio:</span>
+        <span class="value">{{ xml?.Folio ?? '--' }}</span>
       </div>
       <div class="field-item uuid">
         <span class="label">UUID:</span>
@@ -21,13 +28,35 @@
         <span class="label">Versión CFDI:</span>
         <span class="value">{{ xml?.Version ?? '4.0' }}</span>
       </div>
+      <div class="field-item" *ngIf="xml?.Moneda">
+        <span class="label">Moneda:</span>
+        <span class="value">{{ xml.Moneda }}</span>
+      </div>
+      <div class="field-item" *ngIf="xml?.FormaPago">
+        <span class="label">Forma de Pago:</span>
+        <span class="value">{{ xml.FormaPago }} <small *ngIf="formaPagoMap[xml.FormaPago]">({{
+            formaPagoMap[xml.FormaPago]
+            }})</small></span>
+      </div>
+      <div class="field-item" *ngIf="xml?.MetodoPago">
+        <span class="label">Método de Pago:</span>
+        <span class="value">{{ xml.MetodoPago }} <small *ngIf="metodoPagoMap[xml.MetodoPago]">({{
+            metodoPagoMap[xml.MetodoPago]
+            }})</small></span>
+      </div>
+      <div class="field-item" *ngIf="xml?.Exportacion">
+        <span class="label">Exportación:</span>
+        <span class="value">{{ xml.Exportacion }} <small *ngIf="exportacionMap[xml.Exportacion]">({{
+            exportacionMap[xml.Exportacion] }})</small></span>
+      </div>
       <div class="field-item">
         <span class="label">Fecha Emisión:</span>
         <span class="value">{{ xml?.Fecha | date:'medium' }}</span>
       </div>
       <div class="field-item">
         <span class="label">Tipo de Comprobante:</span>
-        <span class="value">{{ xml?.TipoDeComprobante }}</span>
+        <span class="value">{{ xml?.TipoDeComprobante }} <small *ngIf="tipoComprobanteMap[xml.TipoDeComprobante]">({{
+            tipoComprobanteMap[xml.TipoDeComprobante] }})</small></span>
       </div>
       <div class="field-item">
         <span class="label">Lugar de Expedición:</span>
@@ -42,11 +71,14 @@
     <div class="grid-3">
       <div class="field-item">
         <span class="label">Periodicidad:</span>
-        <span class="value">{{ xml.InformacionGlobal.Periodicidad }}</span>
+        <span class="value">{{ xml.InformacionGlobal.Periodicidad }} <small
+            *ngIf="periodicidadMap[xml.InformacionGlobal.Periodicidad]">({{
+            periodicidadMap[xml.InformacionGlobal.Periodicidad] }})</small></span>
       </div>
       <div class="field-item">
         <span class="label">Meses:</span>
-        <span class="value">{{ xml.InformacionGlobal.Meses }}</span>
+        <span class="value">{{ xml.InformacionGlobal.Meses }} <small *ngIf="mesesMap[xml.InformacionGlobal.Meses]">({{
+            mesesMap[xml.InformacionGlobal.Meses] }})</small></span>
       </div>
       <div class="field-item">
         <span class="label">Año:</span>
@@ -74,7 +106,9 @@
         <div class="party-rfc">RFC: {{ xml?.Emisor?.Rfc }}</div>
         <div class="field-item" *ngIf="xml?.Emisor?.RegimenFiscal">
           <span class="label">Régimen Fiscal:</span>
-          <span class="value">{{ xml.Emisor.RegimenFiscal }}</span>
+          <span class="value">{{ xml.Emisor.RegimenFiscal }} <small
+              *ngIf="regimenFiscalMap[xml.Emisor.RegimenFiscal]">({{
+              regimenFiscalMap[xml.Emisor.RegimenFiscal] }})</small></span>
         </div>
       </div>
     </div>
@@ -86,11 +120,14 @@
         <div class="party-rfc">RFC: {{ xml?.Receptor?.Rfc }}</div>
         <div class="field-item" *ngIf="xml?.Receptor?.UsoCFDI">
           <span class="label">Uso CFDI:</span>
-          <span class="value">{{ xml.Receptor.UsoCFDI }}</span>
+          <span class="value">{{ xml.Receptor.UsoCFDI }} <small *ngIf="usoCfdiMap[xml.Receptor.UsoCFDI]">({{
+              usoCfdiMap[xml.Receptor.UsoCFDI] }})</small></span>
         </div>
         <div class="field-item" *ngIf="xml?.Receptor?.RegimenFiscalReceptor">
           <span class="label">Régimen Fiscal Receptor:</span>
-          <span class="value">{{ xml.Receptor.RegimenFiscalReceptor }}</span>
+          <span class="value">{{ xml.Receptor.RegimenFiscalReceptor }} <small
+              *ngIf="regimenFiscalMap[xml.Receptor.RegimenFiscalReceptor]">({{
+              regimenFiscalMap[xml.Receptor.RegimenFiscalReceptor] }})</small></span>
         </div>
         <div class="field-item" *ngIf="xml?.Receptor?.DomicilioFiscalReceptor">
           <span class="label">CP Receptor:</span>
@@ -119,7 +156,8 @@
           <tr class="main-row">
             <td>{{ concepto.Cantidad }}</td>
             <td>{{ concepto.ClaveUnidad }} <small *ngIf="concepto.Unidad">({{ concepto.Unidad }})</small></td>
-            <td>{{ concepto.ClaveProdServ }}</td>
+            <td>{{ concepto.ClaveProdServ }} <small *ngIf="claveProdServMap[concepto.ClaveProdServ]">({{
+                claveProdServMap[concepto.ClaveProdServ] }})</small></td>
             <td>{{ concepto.Descripcion }}</td>
             <td>{{ concepto.ValorUnitario | currency }}</td>
             <td>{{ concepto.Importe | currency }}</td>
@@ -130,20 +168,24 @@
               <div class="concept-details">
                 <span *ngIf="concepto.NoIdentificacion"><strong>No. Identificación:</strong> {{
                   concepto.NoIdentificacion }} | </span>
-                <span *ngIf="concepto.Descuento"><strong>Descuento:</strong> {{ concepto.Descuento | currency }} |
+                <span *ngIf="xml.Descuento"><strong>Descuento:</strong> {{ concepto.Descuento | currency }} |
                 </span>
-                <span *ngIf="concepto.ObjetoImp"><strong>Objeto Impuesto:</strong> {{ concepto.ObjetoImp }}</span>
+                <span *ngIf="concepto.ObjetoImp"><strong>Objeto Impuesto:</strong> {{ concepto.ObjetoImp }} <small
+                    *ngIf="objetoImpuestoMap[concepto.ObjetoImp]">({{
+                    objetoImpuestoMap[concepto.ObjetoImp] }})</small></span>
 
                 <!-- Taxes per concept -->
                 <div class="concept-taxes"
                   *ngIf="getImpuestosConcepto(concepto).traslados.length || getImpuestosConcepto(concepto).retenciones.length">
                   <div class="label">Impuestos del concepto:</div>
                   <div class="tax-tag tras" *ngFor="let t of getImpuestosConcepto(concepto).traslados">
-                    Traslado: {{ t.Impuesto }} | Base: {{ t.Base | currency }} | {{ t.TipoFactor }}: {{ t.TasaOCuota }}
+                    Traslado: {{ impuestoMap[t.Impuesto] ?? t.Impuesto }} | Base: {{ t.Base | currency }} | {{
+                    t.TipoFactor }}: {{ t.TasaOCuota }}
                     | {{ t.Importe | currency }}
                   </div>
                   <div class="tax-tag ret" *ngFor="let r of getImpuestosConcepto(concepto).retenciones">
-                    Retención: {{ r.Impuesto }} | Base: {{ r.Base | currency }} | {{ r.TipoFactor }}: {{ r.TasaOCuota }}
+                    Retención: {{ impuestoMap[r.Impuesto] ?? r.Impuesto }} | Base: {{ r.Base | currency }} | {{
+                    r.TipoFactor }}: {{ r.TasaOCuota }}
                     | {{ r.Importe | currency }}
                   </div>
                 </div>
@@ -211,6 +253,21 @@
           <span class="label">Total Retenidos:</span>
           <span class="value">{{ xml.Impuestos.TotalImpuestosRetenidos | currency }}</span>
         </div>
+        <!-- Detailed Tax Footer -->
+        <ng-container *ngIf="xml.Impuestos.Traslados">
+          <div class="field-item small-tax" *ngFor="let t of toArray(xml.Impuestos.Traslados.Traslado)">
+            <span class="label">{{ impuestoMap[t.Impuesto] ?? 'Traslado ' + t.Impuesto }} <span *ngIf="t.TasaOCuota">({{
+                t.TasaOCuota }})</span>:</span>
+            <span class="value">{{ t.Importe | currency }}</span>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="xml.Impuestos.Retenciones">
+          <div class="field-item small-tax" *ngFor="let r of toArray(xml.Impuestos.Retenciones.Retencion)">
+            <span class="label">{{ impuestoMap[r.Impuesto] ?? 'Retención ' + r.Impuesto }} <span
+                *ngIf="r.TasaOCuota">({{ r.TasaOCuota }})</span>:</span>
+            <span class="value">{{ r.Importe | currency }}</span>
+          </div>
+        </ng-container>
       </div>
 
       <div class="totals-summary">
